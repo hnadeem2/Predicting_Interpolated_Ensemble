@@ -18,6 +18,11 @@ def run_ProteinMPNN(pdb_path,
                     temp=0.1, 
                     batch_size=1):
 
+    """
+    Runs ProteinMPNN
+    Returns: path to seq (str), path to probabilities (str)
+    """
+
     script_path = pmpnn_template  # Path to your bash script
     pdb_name = os.path.splitext(os.path.basename(pdb_path))[0]
     subprocess.run([
