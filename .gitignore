@@ -1,0 +1,7 @@
+# gitignore
+
+# Ignore ProteinMPNN setup
+/ProteinMPNN/
+
+# Ignore temp files
+*.tmp
