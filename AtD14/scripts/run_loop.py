@@ -1,4 +1,5 @@
 
+from Utils import*
 import subprocess
 import os
 
@@ -14,7 +15,7 @@ def run_Boltz(sequence, *args):
 def run_ProteinMPNN(pdb_path,
                     pmpnn_template="pmpnn_template.sh",
                     seed=42,
-                    output_dir="output", 
+                    output_dir="pmpnn_output", 
                     temp=0.1, 
                     batch_size=1):
 
@@ -35,7 +36,7 @@ def run_ProteinMPNN(pdb_path,
         str(batch_size)
     ], check=True)
 
-    return os.path.join(output_dir, f"seqs/{pdb_name}.fasta"),  os.path.join(output_dir, f"probs/{pdb_name}.npz")
+    return os.path.join(output_dir, f"seqs/{pdb_name}.fa"),  os.path.join(output_dir, f"probs/{pdb_name}.npz")
 
 def mix_prob(path_to_prob1, path_to_prob2, lambda_param, *args):
     """
@@ -43,7 +44,7 @@ def mix_prob(path_to_prob1, path_to_prob2, lambda_param, *args):
     new_prob = lambda_param * prob1 + (1 - lambda_param) * prob2
     Returns: new_prob (array or appropriate data structure)
     """
-    pass
+    print("mixing prob")
 
 
 def ca_to_aa(ca_pdb_path, *args):
@@ -83,9 +84,9 @@ def interpolate(s1, s2, lambda_list, T, *args):
         
 
 def main():
-    seq_path, prob_path = run_ProteinMPNN(pdb_path = "../structures/5HZG.A._modified.pdb")
-    print(seq_path, prob_path)
-
+    seq_path_1, prob_path_1 = run_ProteinMPNN(pdb_path = "../structures/5HZG.A._modified.pdb",output_dir='1_output')
+    seq_path_2, prob_path_2 = run_ProteinMPNN(pdb_path = "../structures/4IH4.A.pdb",output_dir='2_output')
+    mix_prob(prob_path_1,prob_path_2,lambda_param=0.5)
 
 if __name__ == '__main__':
     main()
