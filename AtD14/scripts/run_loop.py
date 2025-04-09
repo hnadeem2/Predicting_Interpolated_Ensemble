@@ -1,5 +1,6 @@
 
 from Utils import*
+import numpy as np
 import subprocess
 import os
 
@@ -14,7 +15,7 @@ def run_Boltz(sequence, *args):
 
 def run_ProteinMPNN(pdb_path,
                     pmpnn_template="pmpnn_template.sh",
-                    seed=42,
+                    seed=10,
                     output_dir="pmpnn_output", 
                     temp=0.1, 
                     batch_size=1):
@@ -44,8 +45,10 @@ def mix_prob(path_to_prob1, path_to_prob2, lambda_param, *args):
     new_prob = lambda_param * prob1 + (1 - lambda_param) * prob2
     Returns: new_prob (array or appropriate data structure)
     """
-    print("mixing prob")
-
+    prob1 = np.squeeze(np.load(path_to_prob1)['probs'])
+    prob2 = np.squeeze(np.load(path_to_prob2)['probs'])
+    seq,_ = sequence_list()
+    print(np.argmax(prob1,axis=1))
 
 def ca_to_aa(ca_pdb_path, *args):
     """

@@ -18,6 +18,5 @@ python ../../ProteinMPNN/protein_mpnn_run.py \
     --sampling_temp "$sampling_temp" \
     --seed "$seed" \
     --batch_size "$batch_size" \
-    --ca_only \
     --save_probs 1 \
 
