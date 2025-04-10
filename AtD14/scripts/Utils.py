@@ -37,3 +37,12 @@ def fix_ATD_seq_prob(prob):
     return new_prob
     
 
+def fasta_from_seq(sequence_list, filename):
+    """
+    Creates and saves a fasta file for input to Boltz, each sequence in the sequence list is written as a chain
+    """
+    with open(filename, 'w') as f:
+        for i, seq in enumerate(sequence_list):
+            identifier = chr(65 + i)  # A, B, C, ...
+            f.write(f">{identifier}|protein|\n{seq}\n")
+

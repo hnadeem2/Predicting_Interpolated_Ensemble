@@ -24,6 +24,9 @@ def run_ProteinMPNN(pdb_path,
     Runs ProteinMPNN
     Returns: path to seq (str), path to probabilities (str)
     """
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
 
     script_path = pmpnn_template  # Path to your bash script
     pdb_name = os.path.splitext(os.path.basename(pdb_path))[0]
@@ -39,9 +42,9 @@ def run_ProteinMPNN(pdb_path,
 
     return os.path.join(output_dir, f"seqs/{pdb_name}.fa"),  os.path.join(output_dir, f"probs/{pdb_name}.npz")
 
-def mix_prob(path_to_prob1, path_to_prob2, lambda_param, *args):
+def mix_prob(path_to_prob1, path_to_prob2, lambda_param, round_no):
     """
-    Mix two probability distributions using a weighted average.
+    Mix two probability distributions using a weighted average. Compute the resulting sequence and save as fasta input for Boltz
     new_prob = lambda_param * prob1 + (1 - lambda_param) * prob2
     Returns: new_prob (array or appropriate data structure)
     """
@@ -50,17 +53,20 @@ def mix_prob(path_to_prob1, path_to_prob2, lambda_param, *args):
     prob2 = fix_ATD_seq_prob(prob2)  # to fix ASN issue
     
     mixed_prob = lambda_param *prob1 + (1 - lambda_param) * prob2
-    print(mixed_prob.shape)    
+    seq,_ = sequence_list()
+    ml_seq_idx = np.argmax(mixed_prob,axis=1) 
+    ml_seq = [seq[i] for i in ml_seq_idx]
+    ml_seq = [''.join(ml_seq)]
 
-        
 
+    fasta_dir = f'fasta_Boltz_input/round{round_no}'
+    if not os.path.exists(fasta_dir):
+        os.makedirs(fasta_dir)
+    
+    fasta_path = f'{fasta_dir}/mixed_fasta_round{round_no}.fasta'
+    fasta_from_seq(ml_seq,filename=fasta_path)
 
-
-    # seq,_ = sequence_list()
-    # ml_seq_idx = np.argmax(prob1,axis=1) 
-    # ml_seq = [seq[i] for i in ml_seq_idx]
-    # print(ml_seq)
-
+    return fasta_path
 def ca_to_aa(ca_pdb_path, *args):
     """
     Convert Carbon Alpha (Cα) PDB structure to all-atom representation.
@@ -98,9 +104,12 @@ def interpolate(s1, s2, lambda_list, T, *args):
         
 
 def main():
-    seq_path_1, prob_path_1 = run_ProteinMPNN(pdb_path = "../structures/5HZG.A._modified.pdb",output_dir='1_output')
-    seq_path_2, prob_path_2 = run_ProteinMPNN(pdb_path = "../structures/4IH4.A.pdb",output_dir='2_output')
-    mix_prob(prob_path_1,prob_path_2,lambda_param=0.5)
+    ROUND = 1
+    mpnn_output = f'pMPNN_output/round{ROUND}'
+    seq_path_1, prob_path_1 = run_ProteinMPNN(pdb_path = "../structures/5HZG.A._modified.pdb",output_dir=f'{mpnn_output}/1_output')
+    seq_path_2, prob_path_2 = run_ProteinMPNN(pdb_path = "../structures/4IH4.A.pdb",output_dir=f'{mpnn_output}/2_output')
+    fasta_path = mix_prob(prob_path_1,prob_path_2,lambda_param=0.5,round_no=ROUND)
+
 
 if __name__ == '__main__':
     main()
