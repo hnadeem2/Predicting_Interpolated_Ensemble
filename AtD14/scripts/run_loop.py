@@ -47,8 +47,19 @@ def mix_prob(path_to_prob1, path_to_prob2, lambda_param, *args):
     """
     prob1 = np.squeeze(np.load(path_to_prob1)['probs'])
     prob2 = np.squeeze(np.load(path_to_prob2)['probs'])
-    seq,_ = sequence_list()
-    print(np.argmax(prob1,axis=1))
+    prob2 = fix_ATD_seq_prob(prob2)  # to fix ASN issue
+    
+    mixed_prob = lambda_param *prob1 + (1 - lambda_param) * prob2
+    print(mixed_prob.shape)    
+
+        
+
+
+
+    # seq,_ = sequence_list()
+    # ml_seq_idx = np.argmax(prob1,axis=1) 
+    # ml_seq = [seq[i] for i in ml_seq_idx]
+    # print(ml_seq)
 
 def ca_to_aa(ca_pdb_path, *args):
     """

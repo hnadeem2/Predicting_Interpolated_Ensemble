@@ -1,4 +1,5 @@
 from Bio import SeqIO
+import numpy as np
 
 def parse_fasta(in_fasta, out_fasta, custom_header):
     """
@@ -22,3 +23,17 @@ def sequence_list():
     seq_triple = ['ALA','ARG','ASN','ASP','CYS','GLN','GLU','GLY','HIS','ILE',
              'LEU','LYS','MET','PHE','PRO','SER','THR','TRP','TYR','VAL','GAP']
     return seq_single, seq_triple
+
+
+def fix_ATD_seq_prob(prob):
+    """
+    add a row to the probability matrix to account for a missing residue
+    """
+    row, col = prob.shape
+    arr = np.zeros((1, col))
+    arr[:,2] = 1 # setting probability for 'ASN' or 'N' to 1 
+    new_prob = np.vstack([arr,prob])
+
+    return new_prob
+    
+
