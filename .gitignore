@@ -5,3 +5,5 @@
 
 # Ignore temp files
 *.tmp
+*.ckpt
+*.pkl

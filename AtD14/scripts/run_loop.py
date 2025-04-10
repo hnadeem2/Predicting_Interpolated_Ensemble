@@ -5,12 +5,31 @@ import subprocess
 import os
 
 
-def run_Boltz(sequence, *args):
+def run_Boltz(input_path,
+              boltz_template="boltz_template.sh",
+              output_dir="boltz_output",
+              accelerator='gpu',
+              recycling_steps=25,
+              output_format='pdb',
+              diffusion_samples=10):
     """
     Generate PDB model from Boltz.
     Returns: path_to_pdb_model (str)
     """
-    pass
+
+    script_path = boltz_template
+    cache = f"{output_dir}/model_cache"
+    subprocess.run([
+        'bash',
+        script_path,
+        input_path,
+        output_dir,
+        cache,
+        accelerator,
+        str(recycling_steps),
+        output_format,
+        str(diffusion_samples)
+    ], check=True)
 
 
 def run_ProteinMPNN(pdb_path,
@@ -24,9 +43,6 @@ def run_ProteinMPNN(pdb_path,
     Runs ProteinMPNN
     Returns: path to seq (str), path to probabilities (str)
     """
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
 
     script_path = pmpnn_template  # Path to your bash script
     pdb_name = os.path.splitext(os.path.basename(pdb_path))[0]
@@ -67,20 +83,7 @@ def mix_prob(path_to_prob1, path_to_prob2, lambda_param, round_no):
     fasta_from_seq(ml_seq,filename=fasta_path)
 
     return fasta_path
-def ca_to_aa(ca_pdb_path, *args):
-    """
-    Convert Carbon Alpha (Cα) PDB structure to all-atom representation.
-    Returns: path_to_all_atom_pdb (str)
-    """
-    pass
 
-
-def sample_from_prob(prob_distribution, T, *args):
-    """
-    Sample a sequence from a probability distribution at temperature T.
-    Returns: sampled_sequence (str)
-    """
-    pass
 
 
 def interpolate(s1, s2, lambda_list, T, *args):
@@ -108,7 +111,8 @@ def main():
     mpnn_output = f'pMPNN_output/round{ROUND}'
     seq_path_1, prob_path_1 = run_ProteinMPNN(pdb_path = "../structures/5HZG.A._modified.pdb",output_dir=f'{mpnn_output}/1_output')
     seq_path_2, prob_path_2 = run_ProteinMPNN(pdb_path = "../structures/4IH4.A.pdb",output_dir=f'{mpnn_output}/2_output')
-    fasta_path = mix_prob(prob_path_1,prob_path_2,lambda_param=0.5,round_no=ROUND)
+    fasta_path = mix_prob(prob_path_1,prob_path_2,lambda_param=0.0,round_no=ROUND)
+    run_Boltz(input_path=fasta_path)
 
 
 if __name__ == '__main__':

@@ -6,10 +6,8 @@ sampling_temp="$3"
 seed="$4"
 batch_size="$5"
 
-if [ ! -d $output_dir ]
-then
-    mkdir -p $output_dir
-fi
+
+mkdir -p $output_dir
 
 python ../../ProteinMPNN/protein_mpnn_run.py \
     --pdb_path "$pdb_path"\

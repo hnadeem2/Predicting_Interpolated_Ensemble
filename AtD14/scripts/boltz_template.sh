@@ -6,21 +6,21 @@ cache="$3"
 accelerator="$4"
 recycling_steps="$5"
 output_format="$6"
-use_msa_server="$7"
+diffusion_samples="$7"
 
 
-if [ ! -d $output_dir ]
-then
-    mkdir -p $output_dir
-fi
+mkdir -p $output_dir $cache
 
 boltz predict "$input_path" \
     --out_dir "$output_dir" \
-    --cache "$cache_path" \
+    --cache "$cache" \
     --accelerator "$accelerator" \
     --recycling_steps "$recycling_steps" \
     --output_format "$output_format" \
-    --use_msa_server "$use_msa_server" \
+    --override \
+    --use_msa_server \
+    --diffusion_samples "$diffusion_samples"
+
 
 
 
