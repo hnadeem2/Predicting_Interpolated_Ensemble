@@ -9,9 +9,9 @@ def run_Boltz(input_path,
               boltz_template="boltz_template.sh",
               output_dir="boltz_output",
               accelerator='gpu',
-              recycling_steps=25,
+              recycling_steps=3,
               output_format='pdb',
-              diffusion_samples=10):
+              diffusion_samples=1):
     """
     Generate PDB model from Boltz.
     Returns: path_to_pdb_model (str)
@@ -111,7 +111,7 @@ def main():
     mpnn_output = f'pMPNN_output/round{ROUND}'
     seq_path_1, prob_path_1 = run_ProteinMPNN(pdb_path = "../structures/5HZG.A._modified.pdb",output_dir=f'{mpnn_output}/1_output')
     seq_path_2, prob_path_2 = run_ProteinMPNN(pdb_path = "../structures/4IH4.A.pdb",output_dir=f'{mpnn_output}/2_output')
-    fasta_path = mix_prob(prob_path_1,prob_path_2,lambda_param=0.0,round_no=ROUND)
+    fasta_path = mix_prob(prob_path_1,prob_path_2,lambda_param=0.5,round_no=ROUND)
     run_Boltz(input_path=fasta_path)
 
 

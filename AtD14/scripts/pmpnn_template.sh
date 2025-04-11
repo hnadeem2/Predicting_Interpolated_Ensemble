@@ -17,4 +17,5 @@ python ../../ProteinMPNN/protein_mpnn_run.py \
     --seed "$seed" \
     --batch_size "$batch_size" \
     --save_probs 1 \
+    --pssm_jsonl .\
 

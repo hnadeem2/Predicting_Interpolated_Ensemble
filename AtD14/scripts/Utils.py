@@ -19,7 +19,7 @@ def sequence_list():
     """
     returns sequence list
     """
-    seq_single = list("ARNDCQEGHILKMFPSTWYV-")
+    seq_single = list("ACDEFGHIKLMNPQRSTVWYX")
     seq_triple = ['ALA','ARG','ASN','ASP','CYS','GLN','GLU','GLY','HIS','ILE',
              'LEU','LYS','MET','PHE','PRO','SER','THR','TRP','TYR','VAL','GAP']
     return seq_single, seq_triple
