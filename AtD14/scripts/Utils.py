@@ -20,9 +20,8 @@ def sequence_list():
     returns sequence list
     """
     seq_single = list("ACDEFGHIKLMNPQRSTVWYX")
-    seq_triple = ['ALA','ARG','ASN','ASP','CYS','GLN','GLU','GLY','HIS','ILE',
-             'LEU','LYS','MET','PHE','PRO','SER','THR','TRP','TYR','VAL','GAP']
-    return seq_single, seq_triple
+
+    return seq_single
 
 
 def fix_ATD_seq_prob(prob):
@@ -31,7 +30,7 @@ def fix_ATD_seq_prob(prob):
     """
     row, col = prob.shape
     arr = np.zeros((1, col))
-    arr[:,2] = 1 # setting probability for 'ASN' or 'N' to 1 
+    arr[:,11] = 1 # setting probability for 'ASN' or 'N' to 1 
     new_prob = np.vstack([arr,prob])
 
     return new_prob
