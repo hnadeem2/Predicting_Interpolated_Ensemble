@@ -45,3 +45,14 @@ def fasta_from_seq(sequence_list, filename):
             identifier = chr(65 + i)  # A, B, C, ...
             f.write(f">{identifier}|protein|\n{seq}\n")
 
+
+
+# input struc1 struc2
+# seq1 = mpnn(struc1)
+# seq2 = mpnn(struc2)
+# seq3 = mix(seq1,seq2)
+# struc3 = boltz(seq3)
+
+# struc 2 = struc 3
+
+# repeat
