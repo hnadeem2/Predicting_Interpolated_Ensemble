@@ -6,7 +6,7 @@ from glob import glob
 for beta in [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]:
     source_root = f"Boltz_output_{beta}"
     # Destination directory to collect all PDBs
-    destination_dir = f"aggregated_pdbs_{beta}"
+    destination_dir = f"aggregated_pdbs"
     os.makedirs(destination_dir, exist_ok=True)
 
     # Recursively find all matching PDB files
@@ -21,7 +21,7 @@ for beta in [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]:
         parts = pdb_path.split('/')
         round_label = parts[1]  # e.g., "round1_A"
         pdb_name = os.path.basename(pdb_path)
-        new_name = f"{round_label}_{pdb_name}"
+        new_name = f"{round_label}_{beta}_{pdb_name}"
 
         dest_path = os.path.join(destination_dir, new_name)
         shutil.copy(pdb_path, dest_path)
