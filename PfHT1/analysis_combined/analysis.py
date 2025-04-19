@@ -81,75 +81,19 @@ def pdb_filter(pdb_list, if_pdb, of_pdb):
 
     return new_pdb_list
 
-#if foo == 'abc' and bar == 'bac' 
-
-feats = pickle.load(open("PfHT1_apo_features_clean.pkl","rb"))
-dis1, dis2 = np.concatenate(feats)[:,14], np.concatenate(feats)[:,13]
-
-infc = "IF.pdb"
-outfc = "OF.pdb"
-gen_pdbs =  natsort.natsorted(glob.glob("aggregated_pdbs/*.pdb"))
-gen_pdbs = pdb_filter(gen_pdbs, infc, outfc)
-print(len(gen_pdbs))
-
-
 def return_dis(pdb_list):
 
-	x_coord = []
-	y_coord = []
-	for pdb in pdb_list:
-		traj = md.load(pdb)
-		l47_v314 = traj.top.select('name CA and (resid 46 or resid 313)').reshape(1,-1)
-		I152_H416 = traj.top.select('name CA and (resid 151 or resid 415)').reshape(1,-1)
-		y_dis = md.compute_distances(traj,l47_v314)[0]
-		x_dis = md.compute_distances(traj,I152_H416)[0]
-		x_coord.append(x_dis)
-		y_coord.append(y_dis)
-	return np.concatenate(x_coord), np.concatenate(y_coord)
-
-if_x, if_y = return_dis([infc])
-of_x, of_y = return_dis([outfc])
-gen_x, gen_y = return_dis(gen_pdbs)
-
-
-
-fep(dis1,dis2,y_label="dis-2",x_label="dis-1")#,weights=weights)
-
-plt.scatter(if_x,if_y,marker='o',color='green',label="IF")
-plt.scatter(of_x,of_y,marker='o',color='red',label="OF")
-
-print("Plotting generated points")
-for x,y,text in zip(gen_x,gen_y,gen_pdbs):
-    # print(text)
-    # sys.exit()
-	# lambda_param = float(re.search(r'lambda([0-9.]+)', text).group(1))
-	# plt.annotate(lambda_param,xy=(x,y),fontsize=4)
-	plt.scatter(x,y,marker='X', color = 'black')
-
-# cmap = plt.cm.plasma
-# for x,y,path in zip(gen_x,gen_y,gen_pdbs):
-#     lam = float(re.search(r'aggregated_pdbs_([01](?:\.\d+)?)', path).group(1))
-#     plt.scatter(x, y, color=cmap(lam), marker='o')
-# plt.colorbar(plt.cm.ScalarMappable(cmap=cmap), label='lambda')
-
-
-
-# plt.scatter(gen_x_A,gen_y_A,marker='x', color = 'black', label ="intp IF")
-# plt.scatter(gen_x_B,gen_y_B,marker='x', color = 'red', label ="intp B")
-# plt.scatter(if_model_x,if_model_y,marker='x', color = 'yellow', label ="IF model")
-# plt.scatter(of_model_x,of_model_y,marker='x', color = 'orange', label ="OF model")
-
-plt.tight_layout()
-plt.legend()
-plt.savefig(f'dis.jpg',dpi=400)
-plt.close()
-#plt.show()
-
-######################################################################################
-
-#gen_pdbs =  natsort.natsorted(glob.glob("aggregated_pdbs/*.pdb"))
-
-
+    x_coord = []
+    y_coord = []
+    for pdb in pdb_list:
+        traj = md.load(pdb)
+        l47_v314 = traj.top.select('name CA and (resid 46 or resid 313)').reshape(1,-1)
+        I152_H416 = traj.top.select('name CA and (resid 151 or resid 415)').reshape(1,-1)
+        y_dis = md.compute_distances(traj,l47_v314)[0]
+        x_dis = md.compute_distances(traj,I152_H416)[0]
+        x_coord.append(x_dis)
+        y_coord.append(y_dis)
+    return np.concatenate(x_coord), np.concatenate(y_coord)
 
 def get_angle(t):
     Atom1 = md.compute_center_of_mass(t, select=("resid 306 to 308")) 
@@ -172,8 +116,7 @@ def get_angle(t):
 
     return angle_array
 
-
-def return_dis(pdb_list):
+def return_angle_dis(pdb_list):
     dis_list = []
     angle_list = []
     for pdb in pdb_list:
@@ -189,10 +132,56 @@ def return_dis(pdb_list):
     return dis_list, angle_list
 
 
+############ Plotting dis vs dis ###########################
 
-if_dis, if_angle = return_dis([infc])
-of_dis, of_angle = return_dis([outfc])
-gen_dis, gen_angle = return_dis(gen_pdbs)
+if_x, if_y = return_dis([infc])
+of_x, of_y = return_dis([outfc])
+gen_x, gen_y = return_dis(gen_pdbs)
+
+
+
+feats = pickle.load(open("PfHT1_apo_features_clean.pkl","rb"))
+dis1, dis2 = np.concatenate(feats)[:,14], np.concatenate(feats)[:,13]
+
+infc = "IF.pdb"
+outfc = "OF.pdb"
+gen_pdbs =  natsort.natsorted(glob.glob("aggregated_pdbs/*.pdb"))
+gen_pdbs = pdb_filter(gen_pdbs, infc, outfc)
+print(len(gen_pdbs))
+
+
+
+
+
+fep(dis1,dis2,y_label="dis-2",x_label="dis-1")#,weights=weights)
+
+plt.scatter(if_x,if_y,marker='o',color='green',label="IF")
+plt.scatter(of_x,of_y,marker='o',color='red',label="OF")
+
+# print("Plotting generated points")
+# for x,y,text in zip(gen_x,gen_y,gen_pdbs):
+# 	plt.scatter(x,y,marker='X', color = 'black')
+
+# cmap = plt.cm.plasma
+# for x,y,path in zip(gen_x,gen_y,gen_pdbs):
+#     lam = float(re.search(r'aggregated_pdbs_([01](?:\.\d+)?)', path).group(1))
+#     plt.scatter(x, y, color=cmap(lam), marker='o')
+# plt.colorbar(plt.cm.ScalarMappable(cmap=cmap), label='lambda')
+
+plt.tight_layout()
+plt.legend()
+plt.savefig(f'dis.jpg',dpi=400)
+plt.close()
+#plt.show()
+
+######################################################################################
+
+############ Plotting dis vs angle ###########################
+
+
+if_dis, if_angle = return_angle_dis([infc])
+of_dis, of_angle = return__angle_dis([outfc])
+gen_dis, gen_angle = return__angle_dis(gen_pdbs)
 
 
 angle, dis1, dis2 = np.concatenate(feats)[:,15], np.concatenate(feats)[:,14], np.concatenate(feats)[:,13] 
@@ -200,9 +189,6 @@ fep(dis2-dis1,angle,y_label="angle",x_label="dis2-dis1")#,weights=weights)
 
 print("Plotting generated points")
 for x,y,text in zip(gen_dis,gen_angle,gen_pdbs):
-    
-    #lambda_param = float(re.search(r'aggregated_pdbs_([01](?:\.\d+)?)', text).group(1))
-    #plt.annotate(lambda_param,xy=(x,y),fontsize=4)
     plt.scatter(x,y,marker='X', color = 'black')
 
 
