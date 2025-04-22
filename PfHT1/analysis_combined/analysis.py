@@ -3,6 +3,7 @@ import mdtraj as md
 import pickle 
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
+import matplotlib
 from tqdm.notebook import tqdm
 from deeptime.util import energy2d
 from deeptime.decomposition import TICA
@@ -11,6 +12,8 @@ import sys
 import glob
 import natsort
 import re
+import os
+import subprocess
 
 purple=tuple(['#6247aa','#815ac0','#a06cd5','#b185db','#d2b7e5'])
 blue=tuple(['#2c7da0','#468faf','#61a5c2','#89c2d9','#a9d6e5'])
@@ -79,7 +82,7 @@ def pdb_filter(pdb_list, if_pdb, of_pdb):
         rmsd_list_of.append(rmsd_of)
         new_pdb_list.append(pdb)
 
-    return new_pdb_list
+    return new_pdb_list, rmsd_list_if, rmsd_list_of
 
 def return_dis(pdb_list):
 
@@ -134,72 +137,77 @@ def return_angle_dis(pdb_list):
 
 ############ Plotting dis vs dis ###########################
 
-if_x, if_y = return_dis([infc])
-of_x, of_y = return_dis([outfc])
-gen_x, gen_y = return_dis(gen_pdbs)
-
-
+infc = "IF.pdb"
+outfc = "OF.pdb"
 
 feats = pickle.load(open("PfHT1_apo_features_clean.pkl","rb"))
 dis1, dis2 = np.concatenate(feats)[:,14], np.concatenate(feats)[:,13]
 
-infc = "IF.pdb"
-outfc = "OF.pdb"
 gen_pdbs =  natsort.natsorted(glob.glob("aggregated_pdbs/*.pdb"))
-gen_pdbs = pdb_filter(gen_pdbs, infc, outfc)
-print(len(gen_pdbs))
+gen_pdbs, rmsd_list_if, rmsd_list_of = pdb_filter(gen_pdbs, infc, outfc)
+
+filtered_path = "filtered_aggregated_pdbs"
+os.makedirs(filtered_path, exist_ok=True)
+for i, pdb in enumerate(gen_pdbs):
+    subprocess.call(f'cp {pdb} {filtered_path}/struc_{i}.pdb', shell=True) 
+
+# if_x, if_y = return_dis([infc])
+# of_x, of_y = return_dis([outfc])
+# gen_x, gen_y = return_dis(gen_pdbs)
+
+# fep(dis1,dis2,y_label="dis-2",x_label="dis-1")#,weights=weights)
+
+# # print("Plotting generated points")
+# # for x,y,text in zip(gen_x,gen_y,gen_pdbs):
+# # 	plt.scatter(x,y,marker='X', color = 'black')
+
+
+# rms_plot_list = rmsd_list_of
+
+# cmap = plt.cm.magma
+# norm = matplotlib.colors.Normalize(vmin=0, vmax=7)
+# for x, y, path, r_if in zip(gen_x, gen_y, gen_pdbs, rms_plot_list):
+#     plt.scatter(x, y, color=cmap(norm(r_if)), marker='X')
+# plt.colorbar(matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap), label='RMSD from OF (Å)')
 
 
 
+# plt.scatter(if_x,if_y,marker='o',color='green', edgecolors='black', linewidths=1.5,label="IF")
+# plt.scatter(of_x,of_y,marker='o',color='red', edgecolors='black', linewidths=1.5, label="OF")
+
+# plt.tight_layout()
+# plt.legend()
+# plt.savefig(f'dis_OF_rmsd.jpg',dpi=400)
+# plt.close()
+# #plt.show()
 
 
-fep(dis1,dis2,y_label="dis-2",x_label="dis-1")#,weights=weights)
+# ######################################################################################
 
-plt.scatter(if_x,if_y,marker='o',color='green',label="IF")
-plt.scatter(of_x,of_y,marker='o',color='red',label="OF")
+# ############ Plotting dis vs angle ###########################
+
+
+# if_dis, if_angle = return_angle_dis([infc])
+# of_dis, of_angle = return_angle_dis([outfc])
+# gen_dis, gen_angle = return_angle_dis(gen_pdbs)
+
+
+# angle, dis1, dis2 = np.concatenate(feats)[:,15], np.concatenate(feats)[:,14], np.concatenate(feats)[:,13] 
+# fep(dis2-dis1,angle,y_label="angle",x_label="dis2-dis1")#,weights=weights)
 
 # print("Plotting generated points")
-# for x,y,text in zip(gen_x,gen_y,gen_pdbs):
-# 	plt.scatter(x,y,marker='X', color = 'black')
-
-# cmap = plt.cm.plasma
-# for x,y,path in zip(gen_x,gen_y,gen_pdbs):
-#     lam = float(re.search(r'aggregated_pdbs_([01](?:\.\d+)?)', path).group(1))
-#     plt.scatter(x, y, color=cmap(lam), marker='o')
-# plt.colorbar(plt.cm.ScalarMappable(cmap=cmap), label='lambda')
-
-plt.tight_layout()
-plt.legend()
-plt.savefig(f'dis.jpg',dpi=400)
-plt.close()
-#plt.show()
-
-######################################################################################
-
-############ Plotting dis vs angle ###########################
-
-
-if_dis, if_angle = return_angle_dis([infc])
-of_dis, of_angle = return__angle_dis([outfc])
-gen_dis, gen_angle = return__angle_dis(gen_pdbs)
-
-
-angle, dis1, dis2 = np.concatenate(feats)[:,15], np.concatenate(feats)[:,14], np.concatenate(feats)[:,13] 
-fep(dis2-dis1,angle,y_label="angle",x_label="dis2-dis1")#,weights=weights)
-
-print("Plotting generated points")
-for x,y,text in zip(gen_dis,gen_angle,gen_pdbs):
-    plt.scatter(x,y,marker='X', color = 'black')
+# for x,y,text in zip(gen_dis,gen_angle,gen_pdbs):
+#     plt.scatter(x,y,marker='X', color = 'black')
 
 
 
-# cmap = plt.cm.plasma
-# for x, y, path in zip(gen_dis, gen_angle, gen_pdbs):
-#     lam = float(re.search(r'aggregated_pdbs_([01](?:\.\d+)?)', path).group(1))
-#     plt.scatter(x, y, color=cmap(lam), marker='o')
-# plt.colorbar(plt.cm.ScalarMappable(cmap=cmap), label='lambda')
+# cmap = plt.cm.magma
+# norm = matplotlib.colors.Normalize(vmin=0, vmax=7)
+# for x, y, path,r_if in zip(gen_dis, gen_angle, gen_pdbs, rms_plot_list):
+#     plt.scatter(x, y, color=cmap(norm(r_if)), marker='X')
+# plt.colorbar(matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap), label='RMSD from OF (Å)')
 
-
-plt.scatter(if_dis,if_angle,marker='o',color='green',label="IF")
-plt.scatter(of_dis,of_angle,marker='o',color='red',label="OF")
-plt.savefig(f'angle.jpg',dpi=400)
+# plt.scatter(if_dis,if_angle,marker='o', edgecolors='black', linewidths=1.5,color='green',label="IF")
+# plt.scatter(of_dis,of_angle,marker='o', edgecolors='black', linewidths=1.5,color='red',label="OF")
+# plt.legend(loc='upper left')
+# plt.savefig(f'angle_OF_rmsd.jpg',dpi=400)
