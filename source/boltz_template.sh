@@ -1,5 +1,3 @@
-
-                     
 input_path="$1"
 output_dir="$2"
 cache="$3"
