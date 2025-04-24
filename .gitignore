@@ -6,4 +6,7 @@
 # Ignore temp files
 *.tmp
 *.ckpt
-*.pkl
+*.pkltest_*/
+test_*/
+test_**
+*__pycache__*/
