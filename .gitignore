@@ -7,3 +7,5 @@
 *.tmp
 *.ckpt
 *.pkl
+test_*/
+test_**
