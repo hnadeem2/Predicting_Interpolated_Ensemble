@@ -84,7 +84,7 @@ def run_ProteinMPNN(pdb_path,
     return f"{output_dir}/seqs/{pdb_name}.fa", f"{output_dir}/probs/{pdb_name}.npz"
 
 
-def mix_prob(path_to_prob1, path_to_prob2, lambda_param, round_no, output_dir, label="A"):
+def mix_prob(path_to_prob1, path_to_prob2, lambda_param, round_no, output_dir,chain_dict, label="A"):
     """
     Mix two probability distributions using a weighted average.
     Applies ASN bug fix to any probability file coming from 4IH4.
@@ -106,20 +106,25 @@ def mix_prob(path_to_prob1, path_to_prob2, lambda_param, round_no, output_dir, l
     # Convert to sequence
     seq = sequence_list()
     ml_seq_idx = np.argmax(mixed_prob, axis=1)
-    ml_seq = [''.join([seq[i] for i in ml_seq_idx])]
+    ml_seq = ''.join([seq[i] for i in ml_seq_idx])
 
     # Save FASTA
     fasta_dir = f'{output_dir}/fasta_Boltz_input_{lambda_param}/round{round_no}_{label}'
     os.makedirs(fasta_dir, exist_ok=True)
 
     fasta_path = f'{fasta_dir}/mixed_fasta_round{round_no}.fasta'
-    fasta_from_seq(ml_seq, filename=fasta_path)
-
+    fasta_from_seq(sequence=ml_seq, chain_dict=chain_dict, filename=fasta_path)
+    
     return fasta_path
 
 def main(rounds, lambda_param, s1_pdb, s2_pdb,pmpnn_run_path,output_dir):
     
     ROUNDS = rounds 
+
+    try:
+        chain_dict = compare_pdbs(s1_pdb, s2_pdb)
+    except ValueError as e:
+        print(f"Error: {e}")
 
     for direction in ["A", "B"]:  # A: s1 -> new, B: s2 -> new
         print(f"\nStarting interpolation direction {direction}...")
@@ -138,7 +143,7 @@ def main(rounds, lambda_param, s1_pdb, s2_pdb,pmpnn_run_path,output_dir):
             print(f"\n=== Round {round_num} ({direction}) ===")
 
             round_output_dir = f'{output_dir}/Boltz_output_{lambda_param}/round{round_num}_{direction}'
-            fasta_path = mix_prob(anchor_prob, changing_prob, lambda_param=lambda_param, round_no=round_num, label=direction,output_dir=output_dir)
+            fasta_path = mix_prob(anchor_prob, changing_prob, lambda_param=lambda_param, round_no=round_num, label=direction,output_dir=output_dir,chain_dict=chain_dict)
             new_pdb_path = run_Boltz(input_path=fasta_path, round_no=round_num, output_dir=round_output_dir,lambda_param=lambda_param)
 
             latest_output_dir = f'{output_dir}/pMPNN_output_{lambda_param}/round{round_num}_{direction}_mpnn'
