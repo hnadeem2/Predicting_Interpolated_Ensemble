@@ -1,8 +1,8 @@
 from Utils import *
+from tqdm import tqdm
 import numpy as np
 import subprocess
 import os
-import sys
 import shutil
 import argparse
 
@@ -49,18 +49,35 @@ def convert_to_reference_sequence(ref_pdb, folder):
             f.writelines(new_lines)
 
 
+def run_cg2all(folder, script_path="cg2all_template.sh"):
+    script_path = os.path.abspath(script_path)
+    backbone_files = [f for f in os.listdir(folder) if f.endswith("_backbone.pdb")]
+
+    for fname in tqdm(backbone_files, desc="Running CG2ALL"):
+        in_pdb = os.path.join(folder, fname)
+        out_pdb = in_pdb.replace("_backbone.pdb", "_allatom.pdb")
+
+        try:
+            subprocess.run(["bash", script_path, in_pdb, out_pdb],
+                           check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except subprocess.CalledProcessError:
+            print(f"[ERROR] CG2ALL failed for {fname}")
+        else:
+            os.remove(in_pdb)
+
+
 
 def main(ref_pdb, pred_dir, output_dir):
     copy_predicted_files(pred_dir, output_dir)
     filter_backbone_atoms(output_dir, os.path.basename(ref_pdb))
     convert_to_reference_sequence(ref_pdb, output_dir)
+    run_cg2all(output_dir)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ref_pdb", required=True)
-    parser.add_argument("--pred_dir", required=True)
-    parser.add_argument("--output_dir", required=True)
+    parser.add_argument("--ref_pdb", required=True, help="Reference PDB file with correct residue names")
+    parser.add_argument("--pred_dir", required=True, help="Directory containing predicted PDBs")
+    parser.add_argument("--output_dir", required=True, help="Directory to store processed PDBs")
     args = parser.parse_args()
 
     main(args.ref_pdb, args.pred_dir, args.output_dir)
-
