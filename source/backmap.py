@@ -7,12 +7,33 @@ import shutil
 import argparse
 
 def copy_predicted_files(pred_dir, output_dir):
+    """
+    Copies all `.pdb` files from the prediction directory to the output directory.
+
+    Parameters
+    ----------
+    pred_dir : str
+        Path to the directory containing predicted PDB files.
+    output_dir : str
+        Path to the output directory where files will be copied.
+    """
     os.makedirs(output_dir, exist_ok=True)
     for f in os.listdir(pred_dir):
         if f.endswith(".pdb"):
             shutil.copy(os.path.join(pred_dir, f), os.path.join(output_dir, f))
 
 def filter_backbone_atoms(folder, ref_name):
+    """
+    Filters PDB files in a folder to retain only backbone atoms (N, CA, C, O).
+    Skips the reference PDB file.
+
+    Parameters
+    ----------
+    folder : str
+        Path to the folder containing PDB files.
+    ref_name : str
+        Filename of the reference PDB file to exclude.
+    """
     keep = {"N", "CA", "C", "O"}
     for f in os.listdir(folder):
         if not f.endswith(".pdb") or f == ref_name:
@@ -26,6 +47,16 @@ def filter_backbone_atoms(folder, ref_name):
         os.remove(in_path)
 
 def convert_to_reference_sequence(ref_pdb, folder):
+    """
+    Replaces residue names in all `_backbone.pdb` files in the folder with those from a reference PDB file.
+
+    Parameters
+    ----------
+    ref_pdb : str
+        Path to the reference PDB file with correct residue names.
+    folder : str
+        Path to the folder containing predicted `_backbone.pdb` files.
+    """
     with open(ref_pdb) as f:
         ref_res = [line[17:20] for line in f if line.startswith("ATOM") and line[12:16].strip() == "N"]
 
@@ -48,8 +79,17 @@ def convert_to_reference_sequence(ref_pdb, folder):
         with open(path, 'w') as f:
             f.writelines(new_lines)
 
-
 def run_cg2all(folder, script_path="cg2all_template.sh"):
+    """
+    Runs the CG2ALL script on each `_backbone.pdb` file in a folder to convert them to all-atom representations.
+
+    Parameters
+    ----------
+    folder : str
+        Path to the folder containing `_backbone.pdb` files.
+    script_path : str, optional
+        Path to the CG2ALL bash script (default is "cg2all_template.sh").
+    """
     script_path = os.path.abspath(script_path)
     backbone_files = [f for f in os.listdir(folder) if f.endswith("_backbone.pdb")]
 
@@ -65,9 +105,20 @@ def run_cg2all(folder, script_path="cg2all_template.sh"):
         else:
             os.remove(in_pdb)
 
-
-
 def main(ref_pdb, pred_dir, output_dir):
+    """
+    Main function to process predicted PDB files: copy, filter backbone atoms,
+    standardize residue names using a reference, and run CG2ALL.
+
+    Parameters
+    ----------
+    ref_pdb : str
+        Path to the reference PDB file.
+    pred_dir : str
+        Path to the directory containing predicted PDB files.
+    output_dir : str
+        Path to the output directory where processed files will be stored.
+    """
     copy_predicted_files(pred_dir, output_dir)
     filter_backbone_atoms(output_dir, os.path.basename(ref_pdb))
     convert_to_reference_sequence(ref_pdb, output_dir)

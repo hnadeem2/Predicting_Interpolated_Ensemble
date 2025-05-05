@@ -13,19 +13,30 @@ def run_Boltz(input_path,
               recycling_steps=3,
               output_format='pdb',
               diffusion_samples=1):
-
     """
-    Generate PDB model from Boltz.
-    Returns: path_to_pdb_model (str)
-    """
+    Generates a PDB model using Boltz.
 
+    Args:
+        input_path (str): Path to the input FASTA file.
+        round_no (int): Current interpolation round number.
+        output_dir (str): Directory to store Boltz output.
+        lambda_param (float): Mixing parameter for probability interpolation.
+        boltz_template (str, optional): Path to the Boltz shell script template. Defaults to "boltz_template.sh".
+        accelerator (str, optional): Compute device, e.g., 'gpu' or 'cpu'. Defaults to 'gpu'.
+        recycling_steps (int, optional): Number of recycling steps. Defaults to 3.
+        output_format (str, optional): Output format of structure. Defaults to 'pdb'.
+        diffusion_samples (int, optional): Number of samples to draw from diffusion. Defaults to 1.
+
+    Returns:
+        str: Path to the generated PDB file.
+
+    Raises:
+        FileNotFoundError: If the expected PDB output is not found.
+    """
     script_path = boltz_template
 
-    # Infer direction from output_dir (e.g., round3_A → A)
     direction = os.path.basename(output_dir).split('_')[-1]
     shared_cache = f"{output_dir}/Boltz_output_{lambda_param}/cache_{direction}"
-
-    # Create the cache folder if it doesn't exist
     os.makedirs(shared_cache, exist_ok=True)
 
     subprocess.run([
@@ -39,7 +50,6 @@ def run_Boltz(input_path,
         output_format,
         str(diffusion_samples)
     ], check=True)
-
 
     fasta_base = os.path.splitext(os.path.basename(input_path))[0]
     pdb_path = os.path.join(
@@ -64,8 +74,19 @@ def run_ProteinMPNN(pdb_path,
                     temp=0.1, 
                     batch_size=1):
     """
-    Runs ProteinMPNN.
-    Returns: path to seq (str), path to probabilities (str)
+    Runs ProteinMPNN on a given PDB structure.
+
+    Args:
+        pdb_path (str): Path to input PDB file.
+        output_dir (str): Directory for saving outputs.
+        mpnn_path (str): Path to the ProteinMPNN run script.
+        pmpnn_template (str, optional): Path to the ProteinMPNN shell script template. Defaults to "pmpnn_template.sh".
+        seed (int, optional): Random seed for reproducibility. Defaults to 10.
+        temp (float, optional): Sampling temperature. Defaults to 0.1.
+        batch_size (int, optional): Batch size for generation. Defaults to 1.
+
+    Returns:
+        Tuple[str, str]: Paths to the generated FASTA sequence file and NPZ probability file.
     """
     script_path = pmpnn_template
     pdb_name = os.path.splitext(os.path.basename(pdb_path))[0]
@@ -84,31 +105,32 @@ def run_ProteinMPNN(pdb_path,
     return f"{output_dir}/seqs/{pdb_name}.fa", f"{output_dir}/probs/{pdb_name}.npz"
 
 
-def mix_prob(path_to_prob1, path_to_prob2, lambda_param, round_no, output_dir,chain_dict, label="A"):
+def mix_prob(path_to_prob1, path_to_prob2, lambda_param, round_no, output_dir, chain_dict, label="A"):
     """
-    Mix two probability distributions using a weighted average.
-    Applies ASN bug fix to any probability file coming from 4IH4.
+    Mixes two probability distributions using a weighted average and saves the resulting sequence as a FASTA file.
+
+    Args:
+        path_to_prob1 (str): Path to the first .npz probability file.
+        path_to_prob2 (str): Path to the second .npz probability file.
+        lambda_param (float): Mixing parameter (0-1).
+        round_no (int): Current interpolation round number.
+        output_dir (str): Directory to save output FASTA.
+        chain_dict (dict): Chain information to format FASTA file.
+        label (str, optional): Direction label ("A" or "B"). Defaults to "A".
+
+    Returns:
+        str: Path to the generated FASTA file.
     """
-    # Load and fix if needed
-    if '4IH4' in os.path.basename(path_to_prob1):
-        prob1 = fix_ATD_seq_prob(np.squeeze(np.load(path_to_prob1)['probs']))
-    else:
-        prob1 = np.squeeze(np.load(path_to_prob1)['probs'])
 
-    if '4IH4' in os.path.basename(path_to_prob2):
-        prob2 = fix_ATD_seq_prob(np.squeeze(np.load(path_to_prob2)['probs']))
-    else:
-        prob2 = np.squeeze(np.load(path_to_prob2)['probs'])
+    prob1 = np.squeeze(np.load(path_to_prob1)['probs'])
+    prob2 = np.squeeze(np.load(path_to_prob2)['probs'])
 
-    # Mix the probabilities
     mixed_prob = lambda_param * prob1 + (1 - lambda_param) * prob2
 
-    # Convert to sequence
     seq = sequence_list()
     ml_seq_idx = np.argmax(mixed_prob, axis=1)
     ml_seq = ''.join([seq[i] for i in ml_seq_idx])
 
-    # Save FASTA
     fasta_dir = f'{output_dir}/fasta_Boltz_input_{lambda_param}/round{round_no}_{label}'
     os.makedirs(fasta_dir, exist_ok=True)
 
@@ -117,8 +139,19 @@ def mix_prob(path_to_prob1, path_to_prob2, lambda_param, round_no, output_dir,ch
     
     return fasta_path
 
-def main(rounds, lambda_param, s1_pdb, s2_pdb,pmpnn_run_path,output_dir):
-    
+
+def main(rounds, lambda_param, s1_pdb, s2_pdb, pmpnn_run_path, output_dir):
+    """
+    Main driver for bidirectional ProteinMPNN interpolation with Boltz structure generation.
+
+    Args:
+        rounds (int): Number of interpolation rounds to run.
+        lambda_param (float): Mixing parameter (0-1).
+        s1_pdb (str): Path to structure 1 PDB file.
+        s2_pdb (str): Path to structure 2 PDB file.
+        pmpnn_run_path (str): Path to the ProteinMPNN run script.
+        output_dir (str): Directory to store all outputs.
+    """
     ROUNDS = rounds 
 
     try:
@@ -136,25 +169,37 @@ def main(rounds, lambda_param, s1_pdb, s2_pdb,pmpnn_run_path,output_dir):
             anchor_pdb = s2_pdb
             changing_pdb = s1_pdb
 
-        _, anchor_prob = run_ProteinMPNN(pdb_path=anchor_pdb, output_dir=f'{output_dir}/pMPNN_output_{lambda_param}/{direction}_anchor',mpnn_path=pmpnn_run_path)
-        _, changing_prob = run_ProteinMPNN(pdb_path=changing_pdb, output_dir=f'{output_dir}/pMPNN_output_{lambda_param}/{direction}_changing',mpnn_path=pmpnn_run_path)
+        _, anchor_prob = run_ProteinMPNN(pdb_path=anchor_pdb,
+                                         output_dir=f'{output_dir}/pMPNN_output_{lambda_param}/{direction}_anchor',
+                                         mpnn_path=pmpnn_run_path)
+
+        _, changing_prob = run_ProteinMPNN(pdb_path=changing_pdb,
+                                           output_dir=f'{output_dir}/pMPNN_output_{lambda_param}/{direction}_changing',
+                                           mpnn_path=pmpnn_run_path)
 
         for round_num in range(1, ROUNDS + 1):
             print(f"\n=== Round {round_num} ({direction}) ===")
 
             round_output_dir = f'{output_dir}/Boltz_output_{lambda_param}/round{round_num}_{direction}'
-            fasta_path = mix_prob(anchor_prob, changing_prob, lambda_param=lambda_param, round_no=round_num, label=direction,output_dir=output_dir,chain_dict=chain_dict)
-            new_pdb_path = run_Boltz(input_path=fasta_path, round_no=round_num, output_dir=round_output_dir,lambda_param=lambda_param)
+
+            fasta_path = mix_prob(anchor_prob, changing_prob,
+                                  lambda_param=lambda_param,
+                                  round_no=round_num,
+                                  label=direction,
+                                  output_dir=output_dir,
+                                  chain_dict=chain_dict)
+
+            new_pdb_path = run_Boltz(input_path=fasta_path,
+                                     round_no=round_num,
+                                     output_dir=round_output_dir,
+                                     lambda_param=lambda_param)
 
             latest_output_dir = f'{output_dir}/pMPNN_output_{lambda_param}/round{round_num}_{direction}_mpnn'
-            new_seq_path, latest_prob_path = run_ProteinMPNN(pdb_path=new_pdb_path, output_dir=latest_output_dir,mpnn_path=pmpnn_run_path)
+            new_seq_path, latest_prob_path = run_ProteinMPNN(pdb_path=new_pdb_path,
+                                                              output_dir=latest_output_dir,
+                                                              mpnn_path=pmpnn_run_path)
 
-            # Update for next round
             changing_prob = latest_prob_path
-
-
-
-
 
 
 if __name__ == '__main__':
@@ -172,8 +217,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     for l in args.lambda_param_list:
-        main(args.rounds, l, args.s1_pdb, args.s2_pdb,args.pmpnn_run_path,args.output_dir)
-
-
-
-
+        main(args.rounds, l, args.s1_pdb, args.s2_pdb, args.pmpnn_run_path, args.output_dir)
