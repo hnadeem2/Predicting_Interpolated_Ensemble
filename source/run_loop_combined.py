@@ -121,9 +121,17 @@ def mix_prob(path_to_prob1, path_to_prob2, lambda_param, round_no, output_dir, c
     Returns:
         str: Path to the generated FASTA file.
     """
-
-    prob1 = np.squeeze(np.load(path_to_prob1)['probs'])
-    prob2 = np.squeeze(np.load(path_to_prob2)['probs'])
+    if '4IH4' in os.path.basename(path_to_prob1):
+         prob1 = fix_ATD_seq_prob(np.squeeze(np.load(path_to_prob1)['probs']))
+    else:
+         prob1 = np.squeeze(np.load(path_to_prob1)['probs'])
+ 
+    if '4IH4' in os.path.basename(path_to_prob2):
+         prob2 = fix_ATD_seq_prob(np.squeeze(np.load(path_to_prob2)['probs']))
+    else:
+         prob2 = np.squeeze(np.load(path_to_prob2)['probs'])
+ 
+     # Mix the probabilities
 
     mixed_prob = lambda_param * prob1 + (1 - lambda_param) * prob2
 
@@ -158,6 +166,7 @@ def main(rounds, lambda_param, s1_pdb, s2_pdb, pmpnn_run_path, output_dir):
         chain_dict = compare_pdbs(s1_pdb, s2_pdb)
     except ValueError as e:
         print(f"Error: {e}")
+        #sys.exit()
 
     for direction in ["A", "B"]:  # A: s1 -> new, B: s2 -> new
         print(f"\nStarting interpolation direction {direction}...")
