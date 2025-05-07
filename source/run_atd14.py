@@ -8,6 +8,7 @@ def run_Boltz(input_path,
               round_no,
               output_dir,
               lambda_param,
+              cache_dir,
               boltz_template="boltz_template.sh",
               accelerator='gpu',
               recycling_steps=3,
@@ -23,8 +24,8 @@ def run_Boltz(input_path,
 
     # Infer direction from output_dir (e.g., round3_A → A)
     direction = os.path.basename(output_dir).split('_')[-1]
-    shared_cache = f"{output_dir}/Boltz_output_{lambda_param}/cache_{direction}"
-
+    #shared_cache = f"{output_dir}/Boltz_output_{lambda_param}/cache_{direction}"
+    shared_cache = cache_dir
     # Create the cache folder if it doesn't exist
     os.makedirs(shared_cache, exist_ok=True)
 
@@ -138,8 +139,9 @@ def main(rounds, lambda_param, s1_pdb, s2_pdb,pmpnn_run_path,output_dir):
             print(f"\n=== Round {round_num} ({direction}) ===")
 
             round_output_dir = f'{output_dir}/Boltz_output_{lambda_param}/round{round_num}_{direction}'
+            cache_dir = f"{output_dir}/cache"
             fasta_path = mix_prob(anchor_prob, changing_prob, lambda_param=lambda_param, round_no=round_num, label=direction,output_dir=output_dir)
-            new_pdb_path = run_Boltz(input_path=fasta_path, round_no=round_num, output_dir=round_output_dir,lambda_param=lambda_param)
+            new_pdb_path = run_Boltz(input_path=fasta_path, round_no=round_num, output_dir=round_output_dir,lambda_param=lambda_param,cache_dir=cache_dir)
 
             latest_output_dir = f'{output_dir}/pMPNN_output_{lambda_param}/round{round_num}_{direction}_mpnn'
             new_seq_path, latest_prob_path = run_ProteinMPNN(pdb_path=new_pdb_path, output_dir=latest_output_dir,mpnn_path=pmpnn_run_path)
