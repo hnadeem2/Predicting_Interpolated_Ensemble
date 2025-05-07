@@ -51,7 +51,7 @@ def run_Boltz(input_path, round_no, output_dir, lambda_param,
 
 
 def run_ProteinMPNN(pdb_path, output_dir, pmpnn_template="pmpnn_template.sh",
-                    seed=10, temp=0.1, batch_size=1):
+                    seed=10, temp=0.1, batch_size=1, num_seq_per_target=1):
     """
     Run ProteinMPNN on a PDB structure to predict sequences and probabilities.
 
@@ -71,7 +71,7 @@ def run_ProteinMPNN(pdb_path, output_dir, pmpnn_template="pmpnn_template.sh",
 
     subprocess.run([
         'bash', script_path, pdb_path, output_dir,
-        str(temp), str(seed), str(batch_size)
+        str(temp), str(seed), str(batch_size), str(num_seq_per_target)
     ], check=True)
 
     return (
@@ -80,7 +80,8 @@ def run_ProteinMPNN(pdb_path, output_dir, pmpnn_template="pmpnn_template.sh",
     )
 
 
-def mix_prob(path_to_prob1, path_to_prob2, lambda_param, round_no, output_dir, label="A"):
+def mix_prob(path_to_prob1, path_to_prob2, lambda_param, round_no, output_dir, label="A",
+            msa_mode="mmseqs"):
     """
     Mix two ProteinMPNN probability distributions with a weighted average.
 
@@ -91,7 +92,7 @@ def mix_prob(path_to_prob1, path_to_prob2, lambda_param, round_no, output_dir, l
         round_no (int): Round number of interpolation.
         output_dir (str): Output directory for saving the mixed FASTA.
         label (str): Direction label ("A" or "B").
-
+        msa_mode (str): One of 'mmseqs' or 'pmpnn' (synthetic MSA).
     Returns:
         str: Path to the mixed FASTA file.
     """
@@ -106,14 +107,21 @@ def mix_prob(path_to_prob1, path_to_prob2, lambda_param, round_no, output_dir, l
 
     fasta_dir = os.path.join(output_dir, f'fasta_Boltz_input_{lambda_param}', f'round{round_no}_{label}')
     os.makedirs(fasta_dir, exist_ok=True)
-
     fasta_path = os.path.join(fasta_dir, f'mixed_fasta_round{round_no}.fasta')
-    fasta_from_seq(ml_seq, filename=fasta_path)
+    msa_path = ""
+
+    if msa_mode == 'pmpnn':
+        # Build a synthetic MSA from mixed prob. output
+        msa_path = os.path.join(fasta_dir, f'pmpnn_msa{round_no}.a3m')
+        build_synthetic_msa(mixed_prob, msa_path)
+
+    fasta_from_seq(ml_seq, filename=fasta_path, msa_path=msa_path)
+
 
     return fasta_path
 
 
-def main(rounds, lambda_param, s1_pdb, s2_pdb, output_dir):
+def main(rounds, lambda_param, s1_pdb, s2_pdb, output_dir, msa_mode):
     """
     Run bidirectional interpolation between two structures using ProteinMPNN and Boltz.
 
@@ -123,7 +131,11 @@ def main(rounds, lambda_param, s1_pdb, s2_pdb, output_dir):
         s1_pdb (str): Path to PDB file of structure 1.
         s2_pdb (str): Path to PDB file of structure 2.
         output_dir (str): Root directory for storing all outputs.
+        msa_mode (str): type of MSA to use ('mmseqs' or 'pmpnn').
     """
+    boltz_template = "boltz_template.sh" if msa_mode == 'mmseqs' else "boltz_template_custom_msa.sh"
+
+
     for direction in ["A", "B"]:  # A: s1 -> new, B: s2 -> new
         print(f"\nStarting interpolation direction {direction}...")
 
@@ -140,8 +152,8 @@ def main(rounds, lambda_param, s1_pdb, s2_pdb, output_dir):
             print(f"\n=== Round {round_num} ({direction}) ===")
 
             round_output_dir = os.path.join(output_dir, f'Boltz_output_{lambda_param}', f'round{round_num}_{direction}')
-            fasta_path = mix_prob(anchor_prob, changing_prob, lambda_param, round_num, output_dir, direction)
-            new_pdb_path = run_Boltz(fasta_path, round_num, round_output_dir, lambda_param)
+            fasta_path = mix_prob(anchor_prob, changing_prob, lambda_param, round_num, output_dir, direction, msa_mode)
+            new_pdb_path = run_Boltz(fasta_path, round_num, round_output_dir, lambda_param, boltz_template=boltz_template)
 
             latest_output_dir = os.path.join(output_dir, f'pMPNN_output_{lambda_param}', f'round{round_num}_{direction}_mpnn')
             new_seq_path, latest_prob_path = run_ProteinMPNN(new_pdb_path, latest_output_dir)
@@ -156,6 +168,7 @@ if __name__ == '__main__':
     parser.add_argument("--s1_pdb", type=str, required=True, help="Path to structure 1 PDB")
     parser.add_argument("--s2_pdb", type=str, required=True, help="Path to structure 2 PDB")
     parser.add_argument("--output_dir", type=str, required=True, help="Path to output directory")
+    parser.add_argument("--msa_mode", type=str, default="mmseqs", help="'mmseqs' or 'pmpnn'")
     # parser.add_argument("--pmpnn_run_path", type=str, required=False, default="", help="Path to protein_mpnn_run.py")
     parser.add_argument("--rounds", type=int, required=True, help="Total number of interpolation rounds")
     parser.add_argument("--lambda_param_list", type=float, nargs='+', required=True,
@@ -164,4 +177,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     for l in args.lambda_param_list:
-        main(args.rounds, l, args.s1_pdb, args.s2_pdb, args.output_dir)
+        main(args.rounds, l, args.s1_pdb, args.s2_pdb, args.output_dir, args.msa_mode)
