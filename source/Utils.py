@@ -36,28 +36,28 @@ def fix_ATD_seq_prob(prob):
 
     return new_prob
     
-def fasta_from_seq(sequence_list, filename): # USE THIS ONLY FOR ATD14, BECAUSE OF MISMATCH IN RESIDUES
-     """
-     Creates and saves a fasta file for input to Boltz, each sequence in the sequence list is written as a chain
-     """
-     with open(filename, 'w') as f:
-         for i, seq in enumerate(sequence_list):
-             identifier = chr(65 + i)  # A, B, C, ...
-             f.write(f">{identifier}|protein|\n{seq}\n")
+# def fasta_from_seq(sequence_list, filename): # USE THIS ONLY FOR ATD14, BECAUSE OF MISMATCH IN RESIDUES
+#      """
+#      Creates and saves a fasta file for input to Boltz, each sequence in the sequence list is written as a chain
+#      """
+#      with open(filename, 'w') as f:
+#          for i, seq in enumerate(sequence_list):
+#              identifier = chr(65 + i)  # A, B, C, ...
+#              f.write(f">{identifier}|protein|\n{seq}\n")
 
 
-# def fasta_from_seq(sequence, chain_dict, filename):
-#     """
-#     Creates and saves a fasta file for input to Boltz.
-#     Each chain in the chain_dict is written to the fasta file with its corresponding residues from the sequence.
-#     """
-#     with open(filename, 'w') as f:
-#         start = 0
-#         for chain_id, num_residues in chain_dict.items():
-#             end = start + num_residues
-#             chain_seq = sequence[start:end]
-#             f.write(f">{chain_id}|protein|\n{chain_seq}\n")
-#             start = end
+def fasta_from_seq(sequence, chain_dict, filename):
+    """
+    Creates and saves a fasta file for input to Boltz.
+    Each chain in the chain_dict is written to the fasta file with its corresponding residues from the sequence.
+    """
+    with open(filename, 'w') as f:
+        start = 0
+        for chain_id, num_residues in chain_dict.items():
+            end = start + num_residues
+            chain_seq = sequence[start:end]
+            f.write(f">{chain_id}|protein|\n{chain_seq}\n")
+            start = end
 
 
 

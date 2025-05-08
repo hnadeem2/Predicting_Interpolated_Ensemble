@@ -8,6 +8,7 @@ def run_Boltz(input_path,
               round_no,
               output_dir,
               lambda_param,
+              cache_dir,
               boltz_template="boltz_template.sh",
               accelerator='gpu',
               recycling_steps=3,
@@ -21,6 +22,7 @@ def run_Boltz(input_path,
         round_no (int): Current interpolation round number.
         output_dir (str): Directory to store Boltz output.
         lambda_param (float): Mixing parameter for probability interpolation.
+        cache_dir (str) : Directory to store cache.
         boltz_template (str, optional): Path to the Boltz shell script template. Defaults to "boltz_template.sh".
         accelerator (str, optional): Compute device, e.g., 'gpu' or 'cpu'. Defaults to 'gpu'.
         recycling_steps (int, optional): Number of recycling steps. Defaults to 3.
@@ -36,7 +38,7 @@ def run_Boltz(input_path,
     script_path = boltz_template
 
     direction = os.path.basename(output_dir).split('_')[-1]
-    shared_cache = f"{output_dir}/Boltz_output_{lambda_param}/cache_{direction}"
+    shared_cache = cache_dir
     os.makedirs(shared_cache, exist_ok=True)
 
     subprocess.run([
@@ -186,6 +188,7 @@ def main(rounds, lambda_param, s1_pdb, s2_pdb, pmpnn_run_path, output_dir):
                                            output_dir=f'{output_dir}/pMPNN_output_{lambda_param}/{direction}_changing',
                                            mpnn_path=pmpnn_run_path)
 
+        cache_dir = f"{output_dir}/cache"
         for round_num in range(1, ROUNDS + 1):
             print(f"\n=== Round {round_num} ({direction}) ===")
 
@@ -201,7 +204,8 @@ def main(rounds, lambda_param, s1_pdb, s2_pdb, pmpnn_run_path, output_dir):
             new_pdb_path = run_Boltz(input_path=fasta_path,
                                      round_no=round_num,
                                      output_dir=round_output_dir,
-                                     lambda_param=lambda_param)
+                                     lambda_param=lambda_param,
+                                     cache_dir=cache_dir)
 
             latest_output_dir = f'{output_dir}/pMPNN_output_{lambda_param}/round{round_num}_{direction}_mpnn'
             new_seq_path, latest_prob_path = run_ProteinMPNN(pdb_path=new_pdb_path,
