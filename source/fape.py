@@ -83,11 +83,13 @@ def ref_frames(backbone_coords):
 
 
 def apply_rotation(coords, R, t):
-	return R @ coords + t
+	return R @ coords - t
 
 
 def fape_squared(test_traj, ref_traj):
 	test_coords = extract_backbone_coordinates(test_traj)
-	ref_traj = extract_backbone_coordinates(ref_traj)
+	ref_coords = extract_backbone_coordinates(ref_traj)
+	test_frames = ref_frames(test_coords)
+	ref_frames = ref_frames(ref_coords)
 
-	
+	tiled_test_coords = np.tile()
