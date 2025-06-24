@@ -1,5 +1,8 @@
 # gitignore
 
+# Ignore scratch
+/scratch/
+
 # Ignore ProteinMPNN setup
 /ProteinMPNN/
 
