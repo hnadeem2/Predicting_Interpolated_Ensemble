@@ -13,7 +13,8 @@ def run_Boltz(input_path,
               accelerator='gpu',
               recycling_steps=3,
               output_format='pdb',
-              diffusion_samples=1):
+              diffusion_samples=1,
+              preprocessing_threads=12):
     """
     Generates a PDB model using Boltz.
 
@@ -28,6 +29,7 @@ def run_Boltz(input_path,
         recycling_steps (int, optional): Number of recycling steps. Defaults to 3.
         output_format (str, optional): Output format of structure. Defaults to 'pdb'.
         diffusion_samples (int, optional): Number of samples to draw from diffusion. Defaults to 1.
+        preprocessing_threads (int, optional): Number of cpu threads to use for preprocessing. Defaults to 12.
 
     Returns:
         str: Path to the generated PDB file.
@@ -50,7 +52,8 @@ def run_Boltz(input_path,
         accelerator,
         str(recycling_steps),
         output_format,
-        str(diffusion_samples)
+        str(diffusion_samples),
+        str(preprocessing_threads)
     ], check=True)
 
     fasta_base = os.path.splitext(os.path.basename(input_path))[0]
