@@ -1,0 +1,5 @@
+"""Constants.
+"""
+
+
+PMPNN_ALPHABET = list("ACDEFGHIKLMNPQRSTVWYX")
