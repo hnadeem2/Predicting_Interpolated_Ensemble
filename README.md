@@ -1,2 +1,2 @@
-# Interpolated_Ensemble
-Code for generating ensembles through interpolation
+# Predicting_Interpolated_Ensemble
+Code for generating structural ensembles by sequence interpolation
