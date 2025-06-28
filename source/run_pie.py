@@ -1,6 +1,6 @@
 import argparse
 from pathlib import Path
-from typing import List
+from typing import List, Literal
 import numpy as np
 import biotite.structure.io as bsio
 import biotite.structure as struc
@@ -8,6 +8,7 @@ from data_structs import Structure
 from prob_mixture import compute_alignment_indices, run_pmpnn, combine_features_from_indices, get_max_likelihood_seq
 from predict_struct import run_boltz
 from constants import PMPNN_ALPHABET
+from fape import fape_from_alignment_maps as fape_fn
 
 def getargs():
     parser = argparse.ArgumentParser(description="Interpolate between structural templates.")
@@ -61,6 +62,13 @@ def getargs():
         default=Path("./pmpnn.sh"),
         help="Path to protein mpnn executable script (default: ./pmpnn.sh)."
     )
+    parser.add_argument(
+        "--device",
+        type=str,
+        choices=["cpu", "gpu"],
+        default="gpu",
+        help="Device to use for computation: 'cpu' or 'gpu' (default: gpu)."
+    )
 
     return parser.parse_args()
 
@@ -109,10 +117,22 @@ def load_templates(template_dir: Path, ref_seq: str, **pmpnn_kwargs) -> List[Str
     return structures
 
 
-def run_round_master(num_round, structures, args):
+def find_anchors(structures, cached_dist_mat=None):
+
+    # Get FAPE matrix
+    fape_matrix = compute_pairwise_fape(structures, fape_fn, cached_dist_mat)
+
+    # Find path and gap pair
+    path, gap_idx = shortest_fape_path_mst(fape_matrix, 0, 1) # 0 and 1 are the two user-provided templates
+
+    return structures[gap_idx[0]], structures[gap_idx[1]], fape_matrix
+
+
+
+def run_round_master(num_round, structures, cached_dist_mat, args):
     
     # Find anchors
-    struct_anchors = find_anchors(structures)
+    struct_anchors, fape_matrix = find_anchors(structures, cached_dist_mat)
 
     # Compute mixtures
     prob_arrays = [sa.prob_dist for sa in struct_anchors]
@@ -124,21 +144,28 @@ def run_round_master(num_round, structures, args):
     max_like_seqs = [get_max_likelihood_seq(mp, PMPNN_ALPHABET) for mp in mixed_probs]
 
     # Save these sequences as FASTA files and run Boltz
-    fasta_paths = save_boltz_input(max_like_seqs, args, num_round, struct_anchors) 
+    fasta_paths = save_boltz_input(max_like_seqs, args, num_round) 
 
-    boltz_kwargs = {
-        # Fill up later
-    }
+    pdb_paths = []
+    for i, fp in enumerate(fasta_paths):
+        boltz_kwargs = {
+            "output_dir": Path(args.output_dir, f"round_{num_round}", "boltz", "output", f"struct_{i}"),
+            "boltz_script": args.boltz_script,
+            "accelerator": args.device,
+        }
 
-    pdb_paths = [run_boltz(fp, **boltz_kwargs) for fp in fasta_paths]
+        pdb_paths.append(run_boltz(fp, **boltz_kwargs))
 
     # Run ProteinMPNN
-    pmpnn_kwargs = {
-        # Fill up later
-    }
-
+    
     prob_dists = []
     for pdb_path in pdb_paths:
+        pmpnn_kwargs = {
+            "output_dir": Path(args.output_dir, f"round_{num_round}", "pmpnn", "output", f"struct_{i}"),
+            "pmpnn_path": args.pmpnn_path,
+            "pmpnn_script": args.pmpnn_script,
+        }
+
         _, npz_path = run_pmpnn(pdb_path, **pmpnn_kwargs)
         npz_data = np.load(npz_path)
         prob_dist = np.squeeze(npz_data["probs"])
@@ -146,7 +173,7 @@ def run_round_master(num_round, structures, args):
 
     # Create new Structure objects
     new_structs: List[Structure] = []
-    for i, (structure_path, sequence, prob_dist, w) in zip(pdb_paths, max_like_seqs, prob_dists, weights):
+    for i, (structure_path, sequence, prob_dist, w) in enumerate(zip(pdb_paths, max_like_seqs, prob_dists, weights)):
         identity = f"round_{num_round}_struct_{i}"
         parent_weights = [w, 1-w]
 
@@ -163,8 +190,26 @@ def run_round_master(num_round, structures, args):
 
     structures += new_structs
 
-    write_round_summary(structures, args)
+    return structures, fape_matrix
 
-    return structures
+
+def main():
+    args = getargs()
+
+    pmpnn_kwargs = {
+            "output_dir": Path(args.output_dir, "round_0", "pmpnn", "output"),
+            "pmpnn_path": args.pmpnn_path,
+            "pmpnn_script": args.pmpnn_script,
+        }
+
+    structures = load_templates(args.template_dir, args.ref_seq, **pmpnn_kwargs)
+    write_round_summary(structures, args, 0)
+    cached_dist_mat = None
+
+    for num_round in range(1, args.rounds + 1):
+        print(f"Running round {num_round}")
+        structures, cached_dist_mat = run_round_master(num_round, structures, cached_dist_mat, args)
+        write_round_summary(structures, args, num_round)
+
 
 

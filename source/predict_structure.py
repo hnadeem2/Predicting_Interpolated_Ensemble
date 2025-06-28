@@ -1,14 +1,44 @@
 import os
 import subprocess
 
-def run_boltz(input_path,
-              output_dir,
-              boltz_script,
-              accelerator='gpu',
-              recycling_steps=3,
-              output_format='pdb',
-              diffusion_samples=1,
-              preprocessing_threads=1):
+def save_boltz_input(
+    seqs, 
+    args, 
+    num_round):
+    """
+    Save sequences to FASTA files for Boltz input.
+
+    Parameters:
+        seqs (list of str): Protein sequences.
+        args: Argument object with .output_dir
+        num_round (int): Current round number.
+
+    Returns:
+        List[str]: Paths to the written FASTA files.
+    """
+    base_dir = os.path.join(args.output_dir, f"round_{num_round}", "boltz", "input")
+    os.makedirs(base_dir, exist_ok=True)
+
+    fasta_paths = []
+    for i, seq in enumerate(seqs):
+        fasta_path = os.path.join(base_dir, f"struct_{i}.fa")
+        with open(fasta_path, "w") as f:
+            f.write(">A|protein|\n")
+            f.write(seq + "\n")
+        fasta_paths.append(fasta_path)
+
+    return fasta_paths
+
+
+def run_boltz(
+    input_path,
+    output_dir,
+    boltz_script,
+    accelerator='gpu',
+    recycling_steps=3,
+    output_format='pdb',
+    diffusion_samples=1,
+    preprocessing_threads=1):
     """
     Generates a PDB model using Boltz.
 
@@ -46,13 +76,13 @@ def run_boltz(input_path,
 
     fasta_base = os.path.splitext(os.path.basename(input_path))[0]
     
-    # pdb_path = os.path.join( Change path
-    #     output_dir,
-    #     f"boltz_results_{fasta_base}",
-    #     "predictions",
-    #     fasta_base,
-    #     f"{fasta_base}_model_0.pdb"
-    # )
+    pdb_path = os.path.join( Change path
+        output_dir,
+        f"boltz_results_{fasta_base}",
+        "predictions",
+        fasta_base,
+        f"{fasta_base}_model_0.pdb"
+    )
 
     if not os.path.exists(pdb_path):
         raise FileNotFoundError(f"Expected Boltz output {pdb_path} not found.")

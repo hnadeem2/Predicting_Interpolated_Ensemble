@@ -89,29 +89,72 @@ def apply_rotation(coords, R, t):
     return translated
 
 
-def fape(test_traj, ref_traj):
+def fape(test_traj, ref_traj, test_aln_idx, ref_aln_idx):
     """
-    Computes the Frame Aligned Point Error (FAPE) between two trajectories.
+    Computes Frame Aligned Point Error (FAPE) for aligned residues in two trajectories.
 
     Args:
-        test_traj: The predicted MDTraj trajectory.
-        ref_traj: The ground truth/reference MDTraj trajectory.
+        test_traj: MDTraj object for predicted structure.
+        ref_traj: MDTraj object for reference structure.
+        test_aln_idx: np.ndarray of shape (M,), indices into test_traj.n_residues.
+        ref_aln_idx: np.ndarray of shape (M,), indices into ref_traj.n_residues.
 
     Returns:
-        float: Mean FAPE score across all residue pairs.
+        float: Mean FAPE score across aligned residue pairs.
     """
-    test_coords = extract_backbone_coordinates(test_traj)
-    ref_coords = extract_backbone_coordinates(ref_traj)
+    test_coords = extract_backbone_coordinates(test_traj)  # (N1, 3, 3)
+    ref_coords  = extract_backbone_coordinates(ref_traj)   # (N2, 3, 3)
+
+    # Subset to aligned residues
+    test_coords = test_coords[test_aln_idx]  # (M, 3, 3)
+    ref_coords  = ref_coords[ref_aln_idx]    # (M, 3, 3)
+
+    # Build reference frames for aligned residues
     test_R, test_t = ref_frames(test_coords)
-    ref_R, ref_t = ref_frames(ref_coords)
+    ref_R, ref_t   = ref_frames(ref_coords)
 
-    N = test_traj.n_residues
+    M = len(test_aln_idx)  # Number of aligned residues
 
-    # Tile to shape (N, 3, 3N): for each residue, all residue coordinates
-    tiled_test_coords = np.broadcast_to(test_coords[None, :, :, :], (N, N, 3, 3)).copy().reshape((N, 3*N, 3)).transpose(0, 2, 1)
-    tiled_ref_coords = np.broadcast_to(ref_coords[None, :, :, :], (N, N, 3, 3)).copy().reshape((N, 3*N, 3)).transpose(0, 2, 1)
+    # Repeat each structure's aligned backbone for every frame
+    # Shape: (M, 3, 3M)
+    tiled_test_coords = np.broadcast_to(test_coords[None, :, :, :], (M, M, 3, 3)).copy().reshape((M, 3*M, 3)).transpose(0, 2, 1)
+    tiled_ref_coords  = np.broadcast_to(ref_coords[None, :, :, :],  (M, M, 3, 3)).copy().reshape((M, 3*M, 3)).transpose(0, 2, 1)
 
+    # Transform coordinates to local frames
     tiled_test_coords = apply_rotation(tiled_test_coords, test_R, test_t)
-    tiled_ref_coords = apply_rotation(tiled_ref_coords, ref_R, ref_t)
+    tiled_ref_coords  = apply_rotation(tiled_ref_coords, ref_R, ref_t)
 
+    # Compute FAPE
     return np.mean(np.linalg.norm(tiled_test_coords - tiled_ref_coords, axis=1))
+
+
+def fape_from_alignment_maps(test_traj, ref_traj, test_map, ref_map):
+    """
+    Computes FAPE between two trajectories using alignment maps to a common reference.
+
+    Args:
+        test_traj: MDTraj object for predicted structure.
+        ref_traj: MDTraj object for reference structure.
+        test_map: List[Optional[int]] mapping ref_seq positions to test_traj residue indices.
+        ref_map: List[Optional[int]] mapping ref_seq positions to ref_traj residue indices.
+
+    Returns:
+        float: Mean FAPE over aligned, ungapped positions.
+    """
+    if len(test_map) != len(ref_map):
+        raise ValueError("Alignment maps must be the same length")
+
+    # Extract aligned indices (positions where both maps are not None)
+    aligned_positions = [
+        (t_idx, r_idx) for t_idx, r_idx in zip(test_map, ref_map)
+        if t_idx is not None and r_idx is not None
+    ]
+
+    if not aligned_positions:
+        raise ValueError("No aligned positions found (non-None in both maps)")
+
+    test_indices, ref_indices = zip(*aligned_positions)
+    test_indices = np.array(test_indices)
+    ref_indices = np.array(ref_indices)
+
+    return fape(test_traj, ref_traj, test_indices, ref_indices)

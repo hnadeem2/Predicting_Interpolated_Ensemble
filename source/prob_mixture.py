@@ -5,10 +5,11 @@ import os
 import subprocess
 import numpy as np
 from Bio.Align import PairwiseAligner
-from itertools import product, combinations
 import mdtraj as md 
 from scipy.spatial.distance import squareform
-from scipy.sparse.csgraph import shortest_path
+from scipy.sparse.csgraph import minimum_spanning_tree, shortest_path
+from data_structs import Structure 
+from typing import List, Optional
 
 
 def run_pmpnn(
@@ -27,7 +28,7 @@ def run_pmpnn(
         pdb_path (str): Path to input PDB file.
         output_dir (str): Directory for saving outputs.
         mpnn_path (str): Path to the ProteinMPNN run script.
-        pmpnn_template (str, optional): Path to the ProteinMPNN shell script template. Defaults to "pmpnn_template.sh".
+        pmpnn_script (str, optional): Path to the ProteinMPNN shell script.
         seed (int, optional): Random seed for reproducibility. Defaults to 10.
         temp (float, optional): Sampling temperature. Defaults to 0.1.
         batch_size (int, optional): Batch size for generation. Defaults to 1.
@@ -51,7 +52,6 @@ def run_pmpnn(
     check=True)
 
     return f"{output_dir}/seqs/{pdb_name}.fa", f"{output_dir}/probs/{pdb_name}.npz"
-
 
 
 def compute_alignment_indices(sequences, ref_seq):
@@ -130,43 +130,67 @@ def combine_features_from_indices(arrays, index_maps, ref_len, weights=None):
     return output
 
 
-def load_cif_trajs(filepaths):
+# def load_pdb_trajs(filepaths):
+#     """
+#     Load .pdb files into separate md.Trajectory objects.
+
+#     Parameters:
+#         filepaths (list of str): List of paths to .pdb files.
+
+#     Returns:
+#         list of md.Trajectory: Loaded trajectories.
+#     """
+#     trajs = [md.load(fp) for fp in filepaths]
+#     return trajs
+
+
+def compute_pairwise_fape(
+    structures: List["Structure"],
+    fape_fn: callable,
+    prev_fape_matrix: Optional[np.ndarray] = None,
+) -> np.ndarray:
     """
-    Load .cif files into separate md.Trajectory objects.
+    Incrementally compute pairwise FAPE scores between Structure objects.
 
     Parameters:
-        filepaths (list of str): List of paths to .cif files.
+        structures (List[Structure]): All structures seen so far.
+        fape_fn (callable): Function computing FAPE between two MDTraj trajs.
+        prev_fape_matrix (np.ndarray, optional): Previously computed symmetric FAPE matrix.
 
     Returns:
-        list of md.Trajectory: Loaded trajectories.
+        np.ndarray: Updated symmetric FAPE matrix of shape (N, N).
     """
-    trajs = [md.load_cif(fp) for fp in filepaths]
-    return trajs
+    N = len(structures)
 
+    # Create or expand the FAPE matrix
+    if prev_fape_matrix is None:
+        fape_matrix = np.zeros((N, N))
+    else:
+        fape_matrix = np.zeros((N, N))
+        old_N = prev_fape_matrix.shape[0]
+        fape_matrix[:old_N, :old_N] = prev_fape_matrix
 
-def compute_pairwise_fape(trajs, fape_fn):
-    """
-    Compute all pairwise FAPE scores between trajectories.
+    # Compute only the missing upper triangle (i < j and fape_matrix[i, j] == 0)
+    for i in range(N):
+        for j in range(i + 1, N):
+            if fape_matrix[i, j] == 0 and i != j:
+                struct_a = structures[i]
+                struct_b = structures[j]
+                struct_a_traj = md.load(struct_a.structure_path)
+                struct_b_traj = md.load(struct_b.structure_path)
+                struct_a_aln_map = struct_a.aligned_indices
+                struct_b_aln_map = struct_b.aligned_indices
+                score_1 = fape_fn(struct_a_traj, struct_b_traj, struct_a_aln_map, struct_b_aln_map)
+                score_2 = fape_fn(struct_b_traj, struct_a_traj, struct_b_aln_map, struct_a_aln_map)
+                fape_matrix[i, j] = (score_1 + score_2) / 2
+                fape_matrix[j, i] = fape_matrix[i, j]
 
-    Parameters:
-        trajs (list of md.Trajectory): List of trajectories.
-        fape_fn (callable): Function that computes FAPE between two trajs.
-
-    Returns:
-        np.ndarray: Symmetric matrix of shape (N, N) with FAPE scores.
-    """
-    N = len(trajs)
-    fape_matrix = np.zeros((N, N))
-    for i, j in combinations(range(N), 2):
-        score = fape_fn(trajs[i], trajs[j])
-        fape_matrix[i, j] = score
-        fape_matrix[j, i] = score
     return fape_matrix
 
 
-def shortest_fape_path(fape_matrix, source_idx, target_idx):
+def shortest_fape_path_mst(fape_matrix, source_idx, target_idx):
     """
-    Compute shortest path and largest gap in FAPE distance graph.
+    Compute shortest path and largest gap in FAPE distance graph restricted to MST.
 
     Parameters:
         fape_matrix (np.ndarray): Pairwise FAPE score matrix.
@@ -174,23 +198,30 @@ def shortest_fape_path(fape_matrix, source_idx, target_idx):
         target_idx (int): Index of target structure.
 
     Returns:
-        path (list of int): Indices of structures in shortest path.
+        path (list of int): Indices of structures in shortest MST path.
         gap_indices (tuple of int): Pair of indices with largest FAPE in path.
     """
+    # Step 1: Compute MST
     dist_matrix = fape_matrix.copy()
     np.fill_diagonal(dist_matrix, 0)
-    _, predecessors = shortest_path(dist_matrix, directed=False, return_predecessors=True)
-    
-    # Reconstruct shortest path
+    mst = minimum_spanning_tree(dist_matrix).toarray()
+    mst = np.maximum(mst, mst.T)  # Make symmetric for undirected path
+
+    # Step 2: Compute shortest path on MST graph
+    _, predecessors = shortest_path(mst, directed=False, return_predecessors=True)
+
+    # Step 3: Reconstruct path
     path = []
     current = target_idx
     while current != source_idx:
         path.append(current)
         current = predecessors[source_idx, current]
+        if current == -9999:
+            raise ValueError(f"No path from {source_idx} to {target_idx} in MST")
     path.append(source_idx)
     path = path[::-1]
 
-    # Find largest gap
+    # Step 4: Find largest gap (based on original FAPE matrix)
     max_gap = -np.inf
     gap_pair = (None, None)
     for a, b in zip(path[:-1], path[1:]):
@@ -202,22 +233,22 @@ def shortest_fape_path(fape_matrix, source_idx, target_idx):
     return path, gap_pair
 
 
-def interpolate_arrays(arr_a, arr_b, step=0.1):
-    """
-    Linearly interpolate between two arrays with given step.
+# def interpolate_arrays(arr_a, arr_b, step=0.1):
+#     """
+#     Linearly interpolate between two arrays with given step.
 
-    Parameters:
-        arr_a (np.ndarray): Start array, shape (L, 21).
-        arr_b (np.ndarray): End array, shape (L, 21).
-        step (float): Step size between 0 and 1.
+#     Parameters:
+#         arr_a (np.ndarray): Start array, shape (L, 21).
+#         arr_b (np.ndarray): End array, shape (L, 21).
+#         step (float): Step size between 0 and 1.
 
-    Returns:
-        list of np.ndarray: Interpolated arrays including arr_a and arr_b.
-    """
-    assert arr_a.shape == arr_b.shape, "Arrays must have the same shape"
-    t_values = np.arange(0, 1 + step, step)
-    interpolated = [(1 - t) * arr_a + t * arr_b for t in t_values]
-    return interpolated
+#     Returns:
+#         list of np.ndarray: Interpolated arrays including arr_a and arr_b.
+#     """
+#     assert arr_a.shape == arr_b.shape, "Arrays must have the same shape"
+#     t_values = np.arange(0, 1 + step, step)
+#     interpolated = [(1 - t) * arr_a + t * arr_b for t in t_values]
+#     return interpolated
 
 
 def get_max_likelihood_seq(prob_arr: np.ndarray, alphabet: List[str]) -> str:
