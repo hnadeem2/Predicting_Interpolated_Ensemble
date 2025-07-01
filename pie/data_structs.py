@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 import numpy as np
-from typing import Optional, List
+from typing import List
 
 @dataclass
 class Structure:

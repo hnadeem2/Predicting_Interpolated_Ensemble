@@ -1,0 +1,103 @@
+import argparse
+from pathlib import Path
+from typing import List
+import numpy as np
+import csv
+import biotite.structure.io as bsio
+import biotite.structure as struc
+from data_structs import Structure
+from prob_mixture import compute_alignment_indices, read_alignment_indices, combine_features_from_indices, get_max_likelihood_seq
+from predict_sequence import run_pmpnn
+from predict_struct import save_boltz_input, run_boltz
+from constants import PMPNN_ALPHABET
+from fape import fape_from_alignment_maps as fape_fn
+from graph_building import compute_pairwise_fape, shortest_fape_path_mst
+from utils import write_round_summary
+
+
+def getargs():
+    parser = argparse.ArgumentParser(description="Interpolate between structural templates.")
+
+    # Required arguments
+    parser.add_argument(
+        "ref_seq",
+        type=str,
+        help="Reference or canonical sequence to model."
+    )
+    parser.add_argument(
+        "template_dir",
+        type=Path,
+        help="Path to structural templates (use 2 PDBs) for interpolation."
+    )
+
+    # Optional arguments with defaults
+    parser.add_argument(
+        "--output_dir",
+        type=Path,
+        default=Path("output"),
+        help="Output directory (default: output)."
+    )
+    parser.add_argument(
+        "--pmpnn_path",
+        type=Path,
+        default=Path("/opt/ProteinMPNN"),
+        help="Path to protein_mpnn_run.py (default: /opt/ProteinMPNN)."
+    )
+    parser.add_argument(
+        "--rounds",
+        type=int,
+        default=10,
+        help="Number of interpolation rounds (default: 10)."
+    )
+    parser.add_argument(
+        "--interpolation_steps",
+        type=int,
+        default=10,
+        help="Number of interpolated predictions per round (default: 10)."
+    )
+    parser.add_argument(
+        "--boltz_script",
+        type=Path,
+        default=Path("./boltz.sh"),
+        help="Path to boltz-2 executable script (default: ./boltz.sh)."
+    )
+    parser.add_argument(
+        "--pmpnn_script",
+        type=Path,
+        default=Path("./pmpnn.sh"),
+        help="Path to protein mpnn executable script (default: ./pmpnn.sh)."
+    )
+    parser.add_argument(
+        "--device",
+        type=str,
+        choices=["cpu", "gpu"],
+        default="gpu",
+        help="Device to use for computation: 'cpu' or 'gpu' (default: gpu)."
+    )
+    parser.add_argument(
+        "--template_alignment",
+        type=Path,
+        default=None,
+        help="Path to custom alignment for template structures (.fa/.fasta)."
+    )
+
+    return parser.parse_args()
+
+
+def main():
+    args = getargs()
+
+    pmpnn_kwargs = {
+            "output_dir": Path(args.output_dir, "round_0", "pmpnn", "output"),
+            "pmpnn_path": args.pmpnn_path,
+            "pmpnn_script": args.pmpnn_script,
+        }
+
+    structures = load_templates(args.template_dir, args.ref_seq, **pmpnn_kwargs)
+    write_round_summary(structures, args, 0, None)
+    cached_dist_mat = None
+
+    for num_round in range(1, args.rounds + 1):
+        print(f"Running round {num_round}")
+        structures, cached_dist_mat, path = run_round_master(num_round, structures, cached_dist_mat, args)
+        write_round_summary(structures, args, num_round, path)

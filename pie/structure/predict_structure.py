@@ -1,5 +1,6 @@
 import os
 import subprocess
+from pathlib import Path
 
 def save_boltz_input(
     seqs, 
@@ -31,41 +32,44 @@ def save_boltz_input(
 
 
 def run_boltz(
-    input_path,
+    input_dir,
     output_dir,
     boltz_script,
     accelerator='gpu',
     recycling_steps=3,
     output_format='pdb',
     diffusion_samples=1,
-    preprocessing_threads=1):
+    preprocessing_threads=1
+):
     """
-    Generates a PDB model using Boltz.
+    Generates PDB models using Boltz for all FASTA files in a directory.
 
     Args:
-        input_path (str): Path to the input FASTA file.
+        input_dir (str): Directory containing input FASTA files.
         output_dir (str): Directory to store Boltz output.
-        lambda_param (float): Mixing parameter for probability interpolation.
-        cache_dir (str) : Directory to store cache.
-        boltz_template (str, optional): Path to the Boltz shell script template. Defaults to "boltz_template.sh".
+        boltz_script (str): Path to the Boltz shell script.
         accelerator (str, optional): Compute device, e.g., 'gpu' or 'cpu'. Defaults to 'gpu'.
         recycling_steps (int, optional): Number of recycling steps. Defaults to 3.
         output_format (str, optional): Output format of structure. Defaults to 'pdb'.
         diffusion_samples (int, optional): Number of samples to draw from diffusion. Defaults to 1.
-        preprocessing_threads (int, optional): Number of cpu threads to use for preprocessing. Defaults to 12.
+        preprocessing_threads (int, optional): Number of CPU threads to use for preprocessing. Defaults to 1.
 
     Returns:
-        str: Path to the generated PDB file.
+        List[str]: Paths to the generated PDB files.
 
     Raises:
-        FileNotFoundError: If the expected PDB output is not found.
+        FileNotFoundError: If any expected PDB output is not found.
     """
-    script_path = boltz_script
-
+    # Count input .fa or .fasta files
+    fasta_files = list(Path(input_dir).glob("*.fa")) + list(Path(input_dir).glob("*.fasta"))
+    if not fasta_files:
+        raise FileNotFoundError(f"No FASTA files found in {input_dir}")
+    
+    # Run Boltz script
     subprocess.run([
         'bash',
-        script_path,
-        input_path,
+        boltz_script,
+        input_dir,
         output_dir,
         accelerator,
         str(recycling_steps),
@@ -73,18 +77,20 @@ def run_boltz(
         str(diffusion_samples),
         str(preprocessing_threads)
     ], check=True)
-
-    fasta_base = os.path.splitext(os.path.basename(input_path))[0]
     
-    pdb_path = os.path.join( Change path
-        output_dir,
-        f"boltz_results_{fasta_base}",
-        "predictions",
-        fasta_base,
-        f"{fasta_base}_model_0.pdb"
-    )
+    # Construct expected output paths
+    expected_pdbs = [
+        os.path.join(
+            output_dir,
+            "predictions",
+            Path(f).stem,
+            f"{Path(f).stem}_model_0.pdb"
+        )
+        for f in fasta_files
+    ]
 
-    if not os.path.exists(pdb_path):
-        raise FileNotFoundError(f"Expected Boltz output {pdb_path} not found.")
-    
-    return pdb_path
+    missing = [p for p in expected_pdbs if not os.path.exists(p)]
+    if missing:
+        raise FileNotFoundError(f"Missing predicted PDB files:\n" + "\n".join(missing))
+
+    return expected_pdbs
