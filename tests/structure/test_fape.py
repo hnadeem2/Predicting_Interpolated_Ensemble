@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 import mdtraj as md
-from pie.fape import extract_backbone_coordinates, ref_frames, check_rotation, apply_rotation, fape, fape_from_alignment_maps
+from pie.structure.fape import extract_backbone_coordinates, ref_frames, check_rotation, apply_rotation, fape, fape_from_alignment_maps
 
 
 def make_dummy_traj(n_residues=5):

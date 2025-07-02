@@ -10,6 +10,6 @@
 *.tmp
 *.ckpt
 *.pkltest_*/
-test_*/
-test_**
 *__pycache__*/
+*.py[cod]
+tests/tmp/

@@ -1,0 +1,29 @@
+[project]
+name = "pie"
+version = "0.1.0"
+description = "Protein interpolation engine"
+authors = [
+  { name = "Diego Kleiman", email = "diegokleiman@hotmail.com" }
+]
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "numpy",
+    "biotite",
+    "mdtraj",
+    "scipy",
+    "biopython",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-mock"
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["pie"]
