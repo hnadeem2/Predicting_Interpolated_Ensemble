@@ -86,8 +86,8 @@ def load_templates(template_paths: List[Path], ref_seq: str, chain_ids: List[str
         alignment_indices = compute_alignment_indices(sequences, ref_seq)
 
     # Step 4: Run ProteinMPNN and create Structure objects
-    for pdb_path, seq_str, aligned_idx in zip(pdb_files, sequences, alignment_indices):
-        _, npz_path = run_pmpnn(pdb_path, **pmpnn_kwargs)
+    for pdb_path, seq_str, aligned_idx, chain_id in zip(pdb_files, sequences, alignment_indices, chain_ids):
+        _, npz_path = run_pmpnn(pdb_path, pdb_path_chains=chain_id, **pmpnn_kwargs)
         npz_data = np.load(npz_path)
         prob_dist = np.squeeze(npz_data["probs"])
         

@@ -9,7 +9,8 @@ def run_pmpnn(
     pmpnn_script,
     seed=10, 
     temp=0.1, 
-    batch_size=1
+    batch_size=1,
+    pdb_path_chains="A"
     ):
     """
     Runs ProteinMPNN on a given PDB structure.
@@ -22,6 +23,7 @@ def run_pmpnn(
         seed (int, optional): Random seed for reproducibility. Defaults to 10.
         temp (float, optional): Sampling temperature. Defaults to 0.1.
         batch_size (int, optional): Batch size for generation. Defaults to 1.
+        pdb_path_chains (str, optional): Chain to generate a sequence for.
 
     Returns:
         Tuple[str, str]: Paths to the generated FASTA sequence file and NPZ probability file.
@@ -37,7 +39,8 @@ def run_pmpnn(
         str(temp),
         str(seed),
         str(batch_size),
-        mpnn_path
+        mpnn_path,
+        pdb_path_chains
     ], 
     check=True)
 
