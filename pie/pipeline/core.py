@@ -1,29 +1,83 @@
-# import biotite.database.rcsb as rcsb
-# import biotite.structure.io.pdb as pdb
-# import biotite.structure as struc
-# import biotite.sequence as seq
-TODO: fix imports
 from typing import List
+from biotite.structure.io import load_structure
+from biotite.structure import filter_protein
+from biotite.sequence import ProteinSequence
+import numpy as np
 from pie.data_structs import Structure
 
 
-def load_templates(template_dir: Path, ref_seq: str, aln_file: Path = None, **pmpnn_kwargs) -> List[Structure]:
-    # Step 1: Find .pdb files in the template_dir
-    pdb_files = list(template_dir.glob("*.pdb"))
+def load_modeled_seq(pdb_path, chain_id):
+    """
+    Returns a string with the amino acid sequence of a specific chain,
+    including '-' characters for unmodeled residues.
+    
+    Assumes residue IDs are sequential integers with no insertion codes.
+    
+    Parameters
+    ----------
+    pdb_path : str or Path
+        Path to the input PDB file.
+    chain_id : str
+        The chain ID to extract (e.g., "A").
+    
+    Returns
+    -------
+    str
+        The amino acid sequence with '-' for missing residues.
+    """
+    # Load all atoms
+    atom_array = load_structure(pdb_path)
+
+    # Select atoms from the specified chain
+    chain_atoms = atom_array[atom_array.chain_id == chain_id]
+    if chain_atoms.array_length() == 0:
+        raise ValueError(f"Chain '{chain_id}' not found in {pdb_path}")
+
+    # Filter for standard amino acids
+    protein_atoms = chain_atoms[filter_amino_acids(chain_atoms)]
+    if protein_atoms.array_length() == 0:
+        return ""
+
+    # Get residue IDs and names
+    res_ids = protein_atoms.res_id
+    res_names = protein_atoms.res_name
+
+    # Get unique residues
+    unique_res_ids, indices = np.unique(res_ids, return_index=True)
+    unique_res_names = res_names[indices]
+
+    # Map res_id to 1-letter code
+    res_map = {
+        res_id: ProteinSequence.convert_letter_3to1(res_name)
+        for res_id, res_name in zip(unique_res_ids, unique_res_names)
+    }
+
+    # Fill in missing residues with '-'
+    full_range = range(min(unique_res_ids), max(unique_res_ids) + 1)
+    seq = ''.join(res_map.get(i, '-') for i in full_range)
+
+    return seq
+
+
+def load_templates(template_paths: List[Path], ref_seq: str, chain_ids: List[str], aln_file: Path = None, **pmpnn_kwargs) -> List[Structure]:
+    # Step 1: Check PDB files
+    pdb_files = template_paths
     if len(pdb_files) != 2:
         raise ValueError(f"Expected exactly 2 PDB files in {template_dir}, found {len(pdb_files)}")
+
+    # Check that each path exists and is a file
+    for path in pdb_files:
+        if not Path(path).is_file():
+            raise FileNotFoundError(f"PDB file not found or is not a file: {path}")
 
     structures: List[Structure] = []
     sequences: List[str] = []
 
     # Step 2: Loop through structure files
-    for pdb_path in pdb_files:
-        # Load structure using biotite
-        file = bsio.load_structure(pdb_path)
+    for pdb_path, chain_id in zip(pdb_files, chain_ids):
         # Extract sequence with gaps
-        seq = struc.get_residue_sequence(file, include_gaps=True, gap_char='-') TODO: THIS IS WRONG!
-        seq_str = ''.join(seq)
-        sequences.append(seq_str)
+        seq = load_modeled_seq(pdb_path, chain_id)
+        sequences.append(seq)
 
     # Step 3: Compute alignment indices for each structure to the reference
     if aln_file is not None:

@@ -25,12 +25,29 @@ def getargs():
         help="Reference or canonical sequence to model."
     )
     parser.add_argument(
-        "template_dir",
+        "template_1",
         type=Path,
-        help="Path to structural templates (use 2 PDBs) for interpolation."
+        help="Path to first structural template (PDB) for interpolation."
+    )
+    parser.add_argument(
+        "template_2",
+        type=Path,
+        help="Path to second structural template (PDB) for interpolation."
     )
 
     # Optional arguments with defaults
+    parser.add_argument(
+        "--chain_id_1",
+        type=str,
+        help="Chain ID from first template file.",
+        default="A"
+    )
+    parser.add_argument(
+        "--chain_id_2",
+        type=str,
+        help="Chain ID from second template file.",
+        default="A"
+    )
     parser.add_argument(
         "--output_dir",
         type=Path,
@@ -93,7 +110,12 @@ def main():
             "pmpnn_script": args.pmpnn_script,
         }
 
-    structures = load_templates(args.template_dir, args.ref_seq, **pmpnn_kwargs)
+    structures = load_templates(
+        [args.template_1, args.template_2], 
+        args.ref_seq, 
+        [args.chain_id_1, args.chain_id_2]
+        **pmpnn_kwargs,
+        )
     write_round_summary(structures, args, 0, None)
     cached_dist_mat = None
 
