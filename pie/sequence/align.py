@@ -20,19 +20,53 @@ def compute_alignment_indices(sequences, ref_seq):
 
     for seq in sequences:
         alignment = aligner.align(ref_seq, seq)[0]
-        ref_to_seq_idx = [None] * len(ref_seq)
+
+        # Reconstruct aligned strings
+        ref_aln = []
+        seq_aln = []
 
         ref_pos = 0
         seq_pos = 0
-        for (ref_start, ref_end), (seq_start, seq_end) in zip(*alignment.aligned):
-            while ref_pos < ref_start:
-                ref_to_seq_idx[ref_pos] = None
-                ref_pos += 1
-            for _ in range(ref_end - ref_start):
-                ref_to_seq_idx[ref_pos] = seq_pos
-                ref_pos += 1
-                seq_pos += 1
 
+        for (ref_start, ref_end), (seq_start, seq_end) in zip(*alignment.aligned):
+            # Handle gaps in ref
+            while ref_pos < ref_start:
+                ref_aln.append(ref_seq[ref_pos])
+                seq_aln.append("-")
+                ref_pos += 1
+            # Handle gaps in seq
+            while seq_pos < seq_start:
+                ref_aln.append("-")
+                seq_aln.append(seq[seq_pos])
+                seq_pos += 1
+            # Aligned block
+            for i in range(ref_end - ref_start):
+                ref_aln.append(ref_seq[ref_start + i])
+                seq_aln.append(seq[seq_start + i])
+            ref_pos = ref_end
+            seq_pos = seq_end
+
+        # Add any trailing residues
+        while ref_pos < len(ref_seq):
+            ref_aln.append(ref_seq[ref_pos])
+            seq_aln.append("-")
+            ref_pos += 1
+        while seq_pos < len(seq):
+            ref_aln.append("-")
+            seq_aln.append(seq[seq_pos])
+            seq_pos += 1
+
+        # Build mapping
+        ref_to_seq_idx = []
+        seq_counter = 0
+        for r, s in zip(ref_aln, seq_aln):
+            if r == "-":
+                continue  # gap in reference = skip
+            if s == "-":
+                ref_to_seq_idx.append(None)
+            else:
+                ref_to_seq_idx.append(seq_counter)
+                seq_counter += 1
         index_maps.append(ref_to_seq_idx)
 
     return index_maps
@@ -69,4 +103,4 @@ def read_alignment_indices(aln_file, ref_seq):
             raise ValueError(f"Aligned reference length ({len(ref_to_seq)}) does not match unaligned ref_seq length ({len(ref_seq)})")
         alignment_indices.append(ref_to_seq)
 
-    return alignment_indices
+    return alignment_indices[1:]

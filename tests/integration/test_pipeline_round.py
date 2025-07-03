@@ -18,6 +18,7 @@ def test_pipeline_round(tmp_path):
     ]
     chain_ids = ["A", "A"]
     ref_seq = np.loadtxt("tests/data/ref_seq.txt", dtype=str).item() # Applies for AtD14
+    aln_file = Path("tests/data/aln.fa")
 
     # Define a minimal args object
     class Args:
@@ -39,7 +40,7 @@ def test_pipeline_round(tmp_path):
     }
 
     # Run the template loader
-    structures = load_templates(template_paths, ref_seq, chain_ids, **pmpnn_kwargs)
+    structures = load_templates(template_paths, ref_seq, chain_ids, aln_file, **pmpnn_kwargs)
 
     # Run the actual pipeline round
     structures, fape_matrix, path = run_round_master(
