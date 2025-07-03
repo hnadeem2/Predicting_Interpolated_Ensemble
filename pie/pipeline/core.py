@@ -100,8 +100,12 @@ def load_templates(template_paths: List[Path], ref_seq: str, chain_ids: List[str
         mpnn_mask = np.squeeze(npz_data["mask"]).astype(int)
         prob_dist = prob_dist_raw[mpnn_mask == 1]
         
-        if prob_dist.shape[0] != len(seq_str):
-            raise ValueError(f"Shape mismatch: prob_dist has shape {prob_dist.shape}, sequence length is {len(seq_str)}")
+        if prob_dist.shape[0] != sum(i is not None for i in aligned_idx):
+            raise ValueError(
+                f"Shape mismatch: prob_dist has shape {prob_dist.shape}, "
+                f"but {sum(i is not None for i in aligned_idx)} modeled residues were expected from alignment."
+            )
+
 
         structure = Structure(
             identity=pdb_path.stem,
