@@ -41,8 +41,10 @@ def compute_pairwise_fape(
                 struct_b_traj = md.load(struct_b.structure_path)
                 struct_a_aln_map = struct_a.aligned_indices
                 struct_b_aln_map = struct_b.aligned_indices
-                score_1 = fape_fn(struct_a_traj, struct_b_traj, struct_a_aln_map, struct_b_aln_map)
-                score_2 = fape_fn(struct_b_traj, struct_a_traj, struct_b_aln_map, struct_a_aln_map)
+                chain_a = struct_a.chain_id
+                chain_b = struct_b.chain_id
+                score_1 = fape_fn(struct_a_traj, struct_b_traj, struct_a_aln_map, struct_b_aln_map, chain_ids=[chain_a, chain_b])
+                score_2 = fape_fn(struct_b_traj, struct_a_traj, struct_b_aln_map, struct_a_aln_map, chain_ids=[chain_b, chain_a])
                 fape_matrix[i, j] = (score_1 + score_2) / 2
                 fape_matrix[j, i] = fape_matrix[i, j]
 

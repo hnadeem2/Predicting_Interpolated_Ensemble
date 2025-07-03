@@ -1,22 +1,26 @@
 import numpy as np
 
-def extract_backbone_coordinates(traj):
+def extract_backbone_coordinates(traj, chain_id="A"):
     """
     Extracts the backbone atom coordinates (N, CA, C) from the first frame of a trajectory.
 
     Args:
         traj: An MDTraj trajectory object.
+        chain_id: str. The chain identifier.
 
     Returns:
         np.ndarray of shape (n_residues, 3, 3): 
         Array of backbone coordinates per residue. 
         Axis 0 = residues, axis 1 = atoms (N, CA, C), axis 2 = xyz.
     """
+    chain_idx = ord(chain_id) - ord('A')
+    atom_indices = traj.top.select(f"chainid == {chain_idx}")
+    traj_chain = traj.atom_slice(atom_indices)
     backbone_atoms = ['N', 'CA', 'C']
-    atom_coors = np.zeros((traj.n_residues, 3, 3))
+    atom_coors = np.zeros((traj_chain.n_residues, 3, 3))
     for i, a in enumerate(backbone_atoms):
-        coors = traj.xyz[0, traj.top.select(f"name {a}"), :]
-        assert coors.shape[0] == traj.n_residues, f"Expected {traj.n_residues}, got {coors.shape[0]}"
+        coors = traj_chain.xyz[0, traj_chain.top.select(f"name {a}"), :]
+        assert coors.shape[0] == traj_chain.n_residues, f"Expected {traj_chain.n_residues}, got {coors.shape[0]}"
         atom_coors[:, i, :] = coors
 
     return atom_coors
@@ -89,7 +93,7 @@ def apply_rotation(coords, R, t):
     return translated
 
 
-def fape(test_traj, ref_traj, test_aln_idx, ref_aln_idx):
+def fape(test_traj, ref_traj, test_aln_idx, ref_aln_idx, chain_ids):
     """
     Computes Frame Aligned Point Error (FAPE) for aligned residues in two trajectories.
 
@@ -98,12 +102,13 @@ def fape(test_traj, ref_traj, test_aln_idx, ref_aln_idx):
         ref_traj: MDTraj object for reference structure.
         test_aln_idx: np.ndarray of shape (M,), indices into test_traj.n_residues.
         ref_aln_idx: np.ndarray of shape (M,), indices into ref_traj.n_residues.
+        chain_ids: List[str], list of chain identifiers.
 
     Returns:
         float: Mean FAPE score across aligned residue pairs.
     """
-    test_coords = extract_backbone_coordinates(test_traj)  # (N1, 3, 3)
-    ref_coords  = extract_backbone_coordinates(ref_traj)   # (N2, 3, 3)
+    test_coords = extract_backbone_coordinates(test_traj, chain_id=chain_ids[0])  # (N1, 3, 3)
+    ref_coords  = extract_backbone_coordinates(ref_traj, chain_id=chain_ids[1])   # (N2, 3, 3)
 
     # Subset to aligned residues
     test_coords = test_coords[test_aln_idx]  # (M, 3, 3)
@@ -128,7 +133,7 @@ def fape(test_traj, ref_traj, test_aln_idx, ref_aln_idx):
     return np.mean(np.linalg.norm(tiled_test_coords - tiled_ref_coords, axis=1))
 
 
-def fape_from_alignment_maps(test_traj, ref_traj, test_map, ref_map):
+def fape_from_alignment_maps(test_traj, ref_traj, test_map, ref_map, chain_ids=["A", "A"]):
     """
     Computes FAPE between two trajectories using alignment maps to a common reference.
 
@@ -157,4 +162,4 @@ def fape_from_alignment_maps(test_traj, ref_traj, test_map, ref_map):
     test_indices = np.array(test_indices)
     ref_indices = np.array(ref_indices)
 
-    return fape(test_traj, ref_traj, test_indices, ref_indices)
+    return fape(test_traj, ref_traj, test_indices, ref_indices, chain_ids)

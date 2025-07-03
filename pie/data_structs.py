@@ -9,6 +9,7 @@ class Structure:
     structure_path: Path                            # Path to PDB file
     sequence: str                                   # Amino acid sequence of the PDB structure
     prob_dist: np.ndarray                           # Shape (L, 21): residue identity probability distribution at each site
+    chain_id: str = "A"
     aligned_indices: np.ndarray = field(init=False) # Maps sequence to reference indices
     parents: List["Structure"] = field(default=None)  # Structures mixed to produce this structure
     parent_weights: List[float] = field(init=None)  # Weights used to mix parents' probabilities

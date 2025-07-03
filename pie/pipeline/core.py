@@ -111,7 +111,8 @@ def load_templates(template_paths: List[Path], ref_seq: str, chain_ids: List[str
             identity=pdb_path.stem,
             structure_path=pdb_path,
             sequence=seq_str,
-            prob_dist=prob_dist
+            prob_dist=prob_dist,
+            chain_id=chain_id,
         )
         # Manually override aligned_indices since we're supplying it explicitly
         structure.aligned_indices = aligned_idx
