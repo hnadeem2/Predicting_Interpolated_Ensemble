@@ -8,7 +8,7 @@ from pie.pipeline.core import load_templates, run_round_master
 
 
 @pytest.fixture(autouse=True)
-def mock_save_boltz_input(monkeypatch, tmp_path):
+def mock_save_boltz_input(monkeypatch):
     """
     Automatically patch save_boltz_input in pie.pipeline.core to avoid real file I/O.
     """
@@ -28,7 +28,7 @@ def mock_save_boltz_input(monkeypatch, tmp_path):
     monkeypatch.setattr("pie.pipeline.core.save_boltz_input", dummy_save_boltz_input)
 
 
-def test_pipeline_round(tmp_path):
+def test_pipeline_round():
     """
     Integration test for one round of the full pipeline.
     """
@@ -44,7 +44,7 @@ def test_pipeline_round(tmp_path):
     # Minimal args object
     class Args:
         ref_seq = ""
-        output_dir = str(tmp_path / "scratch")
+        output_dir = "scratch/"
         pmpnn_path = "/opt/ProteinMPNN/"
         pmpnn_script = "pie/pmpnn.sh"
         boltz_script = "pie/boltz.sh"
@@ -55,7 +55,7 @@ def test_pipeline_round(tmp_path):
     args.ref_seq = ref_seq
 
     pmpnn_kwargs = {
-        "output_dir": str(tmp_path / "scratch" / "pmpnn"),
+        "output_dir": "scratch/pmpnn",
         "mpnn_path": "/opt/ProteinMPNN/",
         "pmpnn_script": "pie/pmpnn.sh",
         "seed": 42,
