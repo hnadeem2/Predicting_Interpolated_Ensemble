@@ -43,7 +43,8 @@ def test_read_alignment_indices(tmp_path):
     aln_path = tmp_path / "example_alignment.fasta"
     records = [
         SeqRecord(Seq("A--CDEFGHIK"), id="ref"),
-        SeqRecord(Seq("A--C-E-GHIK"), id="seq1")
+        SeqRecord(Seq("A--C-E-GHIK"), id="seq1"),
+        SeqRecord(Seq("A--C-E-GHIK"), id="seq2")
     ]
     AlignIO.write(MultipleSeqAlignment(records), aln_path, "fasta")
 
