@@ -109,7 +109,7 @@ def main():
     structures = load_templates(
         [args.template_1, args.template_2], 
         args.ref_seq, 
-        [args.chain_id_1, args.chain_id_2]
+        [args.chain_id_1, args.chain_id_2],
         **pmpnn_kwargs,
         )
 
