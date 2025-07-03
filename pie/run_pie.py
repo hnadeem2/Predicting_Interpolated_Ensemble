@@ -95,7 +95,7 @@ def main():
 
     pmpnn_kwargs = {
             "output_dir": Path(args.output_dir, "round_0", "pmpnn", "output"),
-            "pmpnn_path": args.pmpnn_path,
+            "mpnn_path": args.pmpnn_path,
             "pmpnn_script": args.pmpnn_script,
         }
 

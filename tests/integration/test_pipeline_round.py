@@ -45,7 +45,7 @@ def test_pipeline_round():
     class Args:
         ref_seq = ""
         output_dir = "scratch/"
-        pmpnn_path = "/opt/ProteinMPNN/"
+        pmpnn_path = "/opt/ProteinMPNN"
         pmpnn_script = "pie/pmpnn.sh"
         boltz_script = "pie/boltz.sh"
         device = "gpu"
@@ -56,7 +56,7 @@ def test_pipeline_round():
 
     pmpnn_kwargs = {
         "output_dir": "scratch/pmpnn",
-        "mpnn_path": "/opt/ProteinMPNN/",
+        "mpnn_path": "/opt/ProteinMPNN",
         "pmpnn_script": "pie/pmpnn.sh",
         "seed": 42,
         "temp": 0.1,
@@ -79,4 +79,4 @@ def test_pipeline_round():
     for s in structures:
         assert isinstance(s.prob_dist, np.ndarray)
         assert s.prob_dist.shape[1] == 21
-        assert len(s.sequence) == s.prob_dist.shape[0]
+        assert len(s.sequence.replace("-", "")) == s.prob_dist.shape[0]

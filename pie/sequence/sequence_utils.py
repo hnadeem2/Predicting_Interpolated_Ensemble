@@ -37,7 +37,10 @@ def combine_features_from_indices(arrays, index_maps, ref_len, weights=None):
         if weighted_vectors:
             # Normalize weights if some are missing at this position
             wsum = sum(weighted_coeffs)
-            output[i] = sum(weighted_vectors) / wsum
+            if np.isclose(wsum, 0.0):
+                output[i, 20] = 1.0 # No information = 'X'
+            else:
+                output[i] = sum(weighted_vectors) / wsum
 
     return output
 

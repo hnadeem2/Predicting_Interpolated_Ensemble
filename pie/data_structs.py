@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 import numpy as np
-from typing import List
+from typing import List, Optional
 
 @dataclass
 class Structure:
@@ -11,8 +11,8 @@ class Structure:
     prob_dist: np.ndarray                           # Shape (L, 21): residue identity probability distribution at each site
     chain_id: str = "A"
     aligned_indices: np.ndarray = field(init=False) # Maps sequence to reference indices
-    parents: List["Structure"] = field(default=None)  # Structures mixed to produce this structure
-    parent_weights: List[float] = field(init=None)  # Weights used to mix parents' probabilities
+    parents: Optional[List["Structure"]] = None  # Structures mixed to produce this structure
+    parent_weights: Optional[List[float]] = None  # Weights used to mix parents' probabilities
 
 
 

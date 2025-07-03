@@ -24,7 +24,7 @@ def test_run_boltz(monkeypatch, tmp_path):
     # Setup mock FASTA input
     input_dir = tmp_path / "input"
     output_dir = tmp_path / "output"
-    pred_dir = output_dir / "predictions"
+    pred_dir = output_dir / "boltz_results_input" / "predictions"
     input_dir.mkdir()
     pred_dir.mkdir(parents=True)
 

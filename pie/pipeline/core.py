@@ -164,10 +164,10 @@ def run_round_master(num_round, structures, cached_dist_mat, args):
     # Run ProteinMPNN
     
     prob_dists = []
-    for pdb_path in pdb_paths:
+    for i, pdb_path in enumerate(pdb_paths):
         pmpnn_kwargs = {
             "output_dir": Path(args.output_dir, f"round_{num_round}", "pmpnn", "output", f"struct_{i}"),
-            "pmpnn_path": args.pmpnn_path,
+            "mpnn_path": args.pmpnn_path,
             "pmpnn_script": args.pmpnn_script,
         }
 

@@ -1,5 +1,5 @@
 # Use the official PyTorch image with CUDA 11.8
-FROM pytorch/pytorch:2.7.0-cuda11.8-cudnn9-runtime
+FROM pytorch/pytorch:2.7.1-cuda12.6-cudnn9-runtime
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
