@@ -28,7 +28,7 @@ def test_load_modeled_seq(monkeypatch):
 
 def test_load_templates(monkeypatch, tmp_path):
     fake_seq = "ACD"
-    fake_npz = {"probs": np.ones((3, 21))}
+    fake_npz = {"probs": np.ones((3, 21)), "mask": np.ones((1, 3))}
 
     def mock_load_modeled_seq(pdb_path, chain_id):
         return fake_seq
