@@ -28,8 +28,18 @@ def test_pipeline_round(tmp_path):
         device = "gpu"
         interpolation_steps = 2
 
+    # Define extra arguments for PMPNN
+    pmpnn_kwargs = {
+        "output_dir": tmp_path,
+        "pmpnn_path": "/opt/ProteinMPNN/",
+        "pmpnn_script": "pie/pmpnn.sh",
+        "seed": 42,
+        "temp": 0.1,
+        "batch_size": 1,
+    }
+
     # Run the template loader
-    structures = load_templates(template_paths, ref_seq, chain_ids, **vars(Args))
+    structures = load_templates(template_paths, ref_seq, chain_ids, **pmpnn_kwargs)
 
     # Run the actual pipeline round
     structures, fape_matrix, path = run_round_master(
