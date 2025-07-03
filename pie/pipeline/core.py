@@ -96,7 +96,9 @@ def load_templates(template_paths: List[Path], ref_seq: str, chain_ids: List[str
     for pdb_path, seq_str, aligned_idx, chain_id in zip(pdb_files, sequences, alignment_indices, chain_ids):
         _, npz_path = run_pmpnn(pdb_path, pdb_path_chains=chain_id, **pmpnn_kwargs)
         npz_data = np.load(npz_path)
-        prob_dist = np.squeeze(npz_data["probs"])
+        prob_dist_raw = np.squeeze(npz_data["probs"])
+        mpnn_mask = np.squeeze(npz_data["mask"]).astype(int)
+        prob_dist = prob_dist_raw[mpnn_mask == 1]
         
         if prob_dist.shape[0] != len(seq_str):
             raise ValueError(f"Shape mismatch: prob_dist has shape {prob_dist.shape}, sequence length is {len(seq_str)}")
