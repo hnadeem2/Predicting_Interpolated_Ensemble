@@ -82,6 +82,7 @@ def run_boltz(
     expected_pdbs = [
         os.path.join(
             output_dir,
+            "boltz_results_input",
             "predictions",
             Path(f).stem,
             f"{Path(f).stem}_model_0.pdb"
