@@ -19,7 +19,7 @@ class Structure:
         if not isinstance(self.prob_dist, np.ndarray):
             raise TypeError("prob_dist must be a numpy array")
 
-        L = len(self.sequence)
+        L = len(self.sequence.replace("-", ""))
         if self.prob_dist.shape != (L, 21):
             raise ValueError(f"prob_dist must have shape ({L}, 21), got {self.prob_dist.shape}")
 
