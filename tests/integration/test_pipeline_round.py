@@ -1,3 +1,4 @@
+import os
 import pytest
 from pathlib import Path
 import numpy as np
@@ -6,11 +7,10 @@ from unittest.mock import MagicMock
 from pie.pipeline.core import load_templates, run_round_master
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def mock_save_boltz_input(monkeypatch, tmp_path):
     """
-    Fixture to mock save_boltz_input to avoid writing actual files.
-    Returns dummy fasta paths.
+    Automatically patch save_boltz_input in pie.pipeline.core to avoid real file I/O.
     """
     def dummy_save_boltz_input(seqs, args, num_round):
         base_dir = os.path.join(args.output_dir, f"round_{num_round}", "boltz", "input")
@@ -19,35 +19,33 @@ def mock_save_boltz_input(monkeypatch, tmp_path):
         for i, seq in enumerate(seqs):
             fasta_path = os.path.join(base_dir, f"struct_{i}.fa")
             with open(fasta_path, "w") as f:
-                f.write(">A|protein|empty\n") # Avoid MSA for tests
+                f.write(">A|protein|empty\n")
                 f.write(seq + "\n")
             fasta_paths.append(fasta_path)
+        return fasta_paths
 
-        return fasta_paths  
-
-    monkeypatch.setattr("pie.structure.predict_structure.save_boltz_input", dummy_save_boltz_input)
+    # patch in the pipeline module, since run_round_master imported it there
+    monkeypatch.setattr("pie.pipeline.core.save_boltz_input", dummy_save_boltz_input)
 
 
 def test_pipeline_round(tmp_path):
     """
     Integration test for one round of the full pipeline.
-    Requires two sample templates and working ProteinMPNN and Boltz scripts.
     """
-
     # Set up templates (PDB files in tests/data/)
     template_paths = [
         Path("tests/data/4IH4.pdb"),
         Path("tests/data/5HZG.pdb")
     ]
     chain_ids = ["A", "A"]
-    ref_seq = np.loadtxt("tests/data/ref_seq.txt", dtype=str).item() # Applies for AtD14
+    ref_seq = np.loadtxt("tests/data/ref_seq.txt", dtype=str).item()
     aln_file = Path("tests/data/aln.fa")
 
-    # Define a minimal args object
+    # Minimal args object
     class Args:
         ref_seq = ""
-        output_dir = "scratch/"
-        pmpnn_path = "/opt/ProteinMPNN/"  # Replace with ProteinMPNN path
+        output_dir = str(tmp_path / "scratch")
+        pmpnn_path = "/opt/ProteinMPNN/"
         pmpnn_script = "pie/pmpnn.sh"
         boltz_script = "pie/boltz.sh"
         device = "gpu"
@@ -56,9 +54,8 @@ def test_pipeline_round(tmp_path):
     args = Args()
     args.ref_seq = ref_seq
 
-    # Define extra arguments for PMPNN
     pmpnn_kwargs = {
-        "output_dir": "scratch/pmpnn",
+        "output_dir": str(tmp_path / "scratch" / "pmpnn"),
         "mpnn_path": "/opt/ProteinMPNN/",
         "pmpnn_script": "pie/pmpnn.sh",
         "seed": 42,
@@ -66,10 +63,10 @@ def test_pipeline_round(tmp_path):
         "batch_size": 1,
     }
 
-    # Run the template loader
+    # Run template loader
     structures = load_templates(template_paths, ref_seq, chain_ids, aln_file, **pmpnn_kwargs)
 
-    # Run the actual pipeline round
+    # Run pipeline round
     structures, fape_matrix, path = run_round_master(
         num_round=0,
         structures=structures,
@@ -77,8 +74,7 @@ def test_pipeline_round(tmp_path):
         args=args
     )
 
-    # --- Assertions ---
-    # There should be 2 original + 2 interpolated structures
+    # Assertions
     assert len(structures) == 4
     for s in structures:
         assert isinstance(s.prob_dist, np.ndarray)
