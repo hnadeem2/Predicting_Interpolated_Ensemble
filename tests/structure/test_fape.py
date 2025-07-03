@@ -62,7 +62,7 @@ def test_fape_sanity():
     traj2 = make_dummy_traj(4)
 
     aligned = np.array([0, 1, 2, 3])
-    score = fape(traj1, traj2, aligned, aligned)
+    score = fape(traj1, traj2, aligned, aligned, chain_ids=["A", "A"])
     assert isinstance(score, float)
     assert np.allclose([score], [0.0])
 

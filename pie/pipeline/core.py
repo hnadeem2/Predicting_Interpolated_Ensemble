@@ -142,7 +142,7 @@ def run_round_master(num_round, structures, cached_dist_mat, args):
     prob_arrays = [sa.prob_dist for sa in struct_anchors]
     index_maps = [sa.aligned_indices for sa in struct_anchors]
     weights = np.linspace(0, 1, args.interpolation_steps)
-    mixed_probs = [combine_features_from_indices(prob_arrays, index_maps, weights=[w, 1-w]) for w in weights]
+    mixed_probs = [combine_features_from_indices(prob_arrays, index_maps, len(args.ref_seq), weights=[w, 1-w]) for w in weights]
 
     # Find max likelihood sequences
     max_like_seqs = [get_max_likelihood_seq(mp, PMPNN_ALPHABET) for mp in mixed_probs]

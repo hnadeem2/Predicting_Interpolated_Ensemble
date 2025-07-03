@@ -36,7 +36,7 @@ def test_compute_pairwise_fape_with_mocked_mdload(mock_mdload, dummy_structure):
     mock_traj = MagicMock()
     mock_mdload.return_value = mock_traj
 
-    def dummy_fape_fn(traj1, traj2, idx1, idx2):
+    def dummy_fape_fn(traj1, traj2, idx1, idx2, chain_ids):
         return 1.23
 
     structs = [dummy_structure, dummy_structure]
