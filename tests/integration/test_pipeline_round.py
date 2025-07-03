@@ -21,7 +21,7 @@ def test_pipeline_round(tmp_path):
 
     # Define a minimal args object
     class Args:
-        output_dir = tmp_path
+        output_dir = "/scratch/"
         pmpnn_path = "/opt/ProteinMPNN/"  # Replace with ProteinMPNN path
         pmpnn_script = "pie/pmpnn.sh"
         boltz_script = "pie/boltz.sh"
@@ -30,7 +30,7 @@ def test_pipeline_round(tmp_path):
 
     # Define extra arguments for PMPNN
     pmpnn_kwargs = {
-        "output_dir": tmp_path,
+        "output_dir": "/scratch/",
         "mpnn_path": "/opt/ProteinMPNN/",
         "pmpnn_script": "pie/pmpnn.sh",
         "seed": 42,
