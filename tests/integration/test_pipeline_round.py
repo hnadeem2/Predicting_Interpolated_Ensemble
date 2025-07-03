@@ -31,7 +31,7 @@ def test_pipeline_round(tmp_path):
     # Define extra arguments for PMPNN
     pmpnn_kwargs = {
         "output_dir": tmp_path,
-        "pmpnn_path": "/opt/ProteinMPNN/",
+        "mpnn_path": "/opt/ProteinMPNN/",
         "pmpnn_script": "pie/pmpnn.sh",
         "seed": 42,
         "temp": 0.1,
