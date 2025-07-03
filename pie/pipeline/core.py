@@ -11,6 +11,7 @@ from pie.sequence.sequence_utils import combine_features_from_indices, get_max_l
 from pie.structure.predict_structure import save_boltz_input, run_boltz
 from pie.graph.graph_building import compute_pairwise_fape, shortest_fape_path_mst
 from pie.structure.fape import fape_from_alignment_maps as fape_fn
+from pie.constants import PMPNN_ALPHABET
 
 
 def load_modeled_seq(pdb_path, chain_id):
