@@ -1,10 +1,11 @@
 input_path="$1"
 output_dir="$2"
-cache="$3"
-accelerator="$4"
-recycling_steps="$5"
-output_format="$6"
-diffusion_samples="$7"
+# cache="$3"
+accelerator="$3"
+recycling_steps="$4"
+output_format="$5"
+diffusion_samples="$6"
+preprocessing_threads="$7"
 
 
 mkdir -p $output_dir # $cache
@@ -17,7 +18,7 @@ boltz predict "$input_path" \
     --override \
     --use_msa_server \
     --diffusion_samples "$diffusion_samples" \
-    --preprocessing-threads 1
+    --preprocessing-threads "$preprocessing_threads" \
     # --cache "$cache" \
 
 

@@ -3,16 +3,16 @@ output_dir="$2"
 sampling_temp="$3"
 seed="$4"
 batch_size="$5"
-num_seq_per_target="$6"
+mpnn_path="$6"
 pdb_path_chains="$7"
 
 mkdir -p $output_dir
 
-python /opt/ProteinMPNN/protein_mpnn_run.py \
+python "$mpnn_path"/protein_mpnn_run.py \
     --pdb_path "$pdb_path"\
     --pdb_path_chains "$pdb_path_chains"\
     --out_folder "$output_dir" \
-    --num_seq_per_target "$num_seq_per_target" \
+    --num_seq_per_target 1 \
     --sampling_temp "$sampling_temp" \
     --seed "$seed" \
     --batch_size "$batch_size" \
