@@ -153,6 +153,7 @@ def run_round_master(num_round, structures, cached_dist_mat, args):
     fasta_paths = save_boltz_input(max_like_seqs, args, num_round) 
     print(fasta_paths)
     fasta_paths_dir = os.path.dirname(fasta_paths[0])
+    print(fasta_paths_dir)
     assert all(os.path.dirname(f) == os.path.dirname(fasta_paths_dir) for f in fasta_paths), "Not all files are in the same directory"
     
     boltz_kwargs = {
