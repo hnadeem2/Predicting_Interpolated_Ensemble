@@ -1,8 +1,32 @@
 import pytest
 from pathlib import Path
 import numpy as np
+from unittest.mock import MagicMock
 
 from pie.pipeline.core import load_templates, run_round_master
+
+
+@pytest.fixture
+def mock_save_boltz_input(monkeypatch, tmp_path):
+    """
+    Fixture to mock save_boltz_input to avoid writing actual files.
+    Returns dummy fasta paths.
+    """
+    def dummy_save_boltz_input(seqs, args, num_round):
+         base_dir = os.path.join(args.output_dir, f"round_{num_round}", "boltz", "input")
+        os.makedirs(base_dir, exist_ok=True)
+
+        fasta_paths = []
+        for i, seq in enumerate(seqs):
+            fasta_path = os.path.join(base_dir, f"struct_{i}.fa")
+            with open(fasta_path, "w") as f:
+                f.write(">A|protein|empty\n") # Avoid MSA for tests
+                f.write(seq + "\n")
+            fasta_paths.append(fasta_path)
+
+        return fasta_paths  
+
+    monkeypatch.setattr("pie.structure.predict_structure.save_boltz_input", dummy_save_boltz_input)
 
 
 def test_pipeline_round(tmp_path):

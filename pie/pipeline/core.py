@@ -156,7 +156,7 @@ def run_round_master(num_round, structures, cached_dist_mat, args):
     # assert all(os.path.dirname(f) == os.path.dirname(fasta_paths_dir) for f in fasta_paths), "Not all files are in the same directory"
     
     boltz_kwargs = {
-        "output_dir": Path(args.output_dir, f"round_{num_round}", "boltz", "output", f"struct_{i}"),
+        "output_dir": Path(args.output_dir, f"round_{num_round}", "boltz", "output"),
         "boltz_script": args.boltz_script,
         "accelerator": args.device,
     }
