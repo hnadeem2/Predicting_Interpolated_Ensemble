@@ -2,16 +2,13 @@ import os
 import subprocess
 from pathlib import Path
 
-def save_boltz_input(
-    seqs, 
-    args, 
-    num_round):
+def save_boltz_input(seqs, args, num_round):
     """
     Save sequences to FASTA files for Boltz input.
 
     Parameters:
         seqs (list of str): Protein sequences.
-        args: Argument object with .output_dir
+        args: Argument object with .output_dir and .msa_mode
         num_round (int): Current round number.
 
     Returns:
@@ -24,7 +21,14 @@ def save_boltz_input(
     for i, seq in enumerate(seqs):
         fasta_path = os.path.join(base_dir, f"struct_{i}.fa")
         with open(fasta_path, "w") as f:
-            f.write(">A|protein|\n")
+            if args.msa_mode == "server":
+                f.write(">A|protein|\n")
+            elif args.msa_mode == "empty":
+                f.write(">A|protein|empty\n")
+            elif args.msa_mode == "local":
+                raise NotImplementError(f"{args.msa_mode} is not implemented.")
+            else:
+                raise ValueError(f"{args.msa_mode} is not a valid MSA mode.")
             f.write(seq + "\n")
         fasta_paths.append(fasta_path)
 

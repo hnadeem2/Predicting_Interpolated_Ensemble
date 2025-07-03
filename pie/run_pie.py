@@ -86,6 +86,13 @@ def getargs():
         default=None,
         help="Path to custom alignment for template structures (.fa/.fasta)."
     )
+    parser.add_argument(
+        "--msa_mode",
+        type=str,
+        choices=["server", "local", "empty"],
+        default="server",
+        help="MSA computation mode. Local is not implemented yet."
+    )
 
     return parser.parse_args()
 

@@ -7,6 +7,7 @@ from pie.structure.predict_structure import save_boltz_input, run_boltz
 def test_save_boltz_input(tmp_path):
     class Args:
         output_dir = tmp_path
+        msa_mode = "empty"
 
     seqs = ["ACDE", "FGHI"]
     paths = save_boltz_input(seqs, Args(), num_round=1)

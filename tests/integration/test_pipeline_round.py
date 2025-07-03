@@ -7,27 +7,7 @@ from unittest.mock import MagicMock
 from pie.pipeline.core import load_templates, run_round_master
 
 
-@pytest.fixture(autouse=True)
-def mock_save_boltz_input(monkeypatch):
-    """
-    Automatically patch save_boltz_input in pie.pipeline.core to avoid real file I/O.
-    """
-    def dummy_save_boltz_input(seqs, args, num_round):
-        base_dir = os.path.join(args.output_dir, f"round_{num_round}", "boltz", "input")
-        os.makedirs(base_dir, exist_ok=True)
-        fasta_paths = []
-        for i, seq in enumerate(seqs):
-            fasta_path = os.path.join(base_dir, f"struct_{i}.fa")
-            with open(fasta_path, "w") as f:
-                f.write(">A|protein|empty\n")
-                f.write(seq + "\n")
-            fasta_paths.append(fasta_path)
-        return fasta_paths
-
-    # patch in the pipeline module, since run_round_master imported it there
-    monkeypatch.setattr("pie.pipeline.core.save_boltz_input", dummy_save_boltz_input)
-
-
+@pytest.mark.slow
 def test_pipeline_round():
     """
     Integration test for one round of the full pipeline.
@@ -50,6 +30,7 @@ def test_pipeline_round():
         boltz_script = "pie/boltz.sh"
         device = "gpu"
         interpolation_steps = 2
+        msa_mode = "empty"
 
     args = Args()
     args.ref_seq = ref_seq
