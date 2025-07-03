@@ -13,9 +13,8 @@ def mock_save_boltz_input(monkeypatch, tmp_path):
     Returns dummy fasta paths.
     """
     def dummy_save_boltz_input(seqs, args, num_round):
-         base_dir = os.path.join(args.output_dir, f"round_{num_round}", "boltz", "input")
+        base_dir = os.path.join(args.output_dir, f"round_{num_round}", "boltz", "input")
         os.makedirs(base_dir, exist_ok=True)
-
         fasta_paths = []
         for i, seq in enumerate(seqs):
             fasta_path = os.path.join(base_dir, f"struct_{i}.fa")
