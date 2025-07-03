@@ -22,13 +22,16 @@ def test_pipeline_round(tmp_path):
 
     # Define a minimal args object
     class Args:
-        ref_seq = ref_seq
+        ref_seq = ""
         output_dir = "/scratch/"
         pmpnn_path = "/opt/ProteinMPNN/"  # Replace with ProteinMPNN path
         pmpnn_script = "pie/pmpnn.sh"
         boltz_script = "pie/boltz.sh"
         device = "gpu"
         interpolation_steps = 2
+
+    args = Args()
+    args.ref_seq = ref_seq
 
     # Define extra arguments for PMPNN
     pmpnn_kwargs = {
@@ -48,7 +51,7 @@ def test_pipeline_round(tmp_path):
         num_round=0,
         structures=structures,
         cached_dist_mat=None,
-        args=Args
+        args=args
     )
 
     # --- Assertions ---
