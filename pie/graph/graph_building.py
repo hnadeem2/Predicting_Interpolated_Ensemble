@@ -6,7 +6,7 @@ from pie.data_structs import Structure
 
 
 def compute_pairwise_fape(
-    structures: List[Structure],
+    structures: List["Structure"],
     fape_fn: callable,
     prev_fape_matrix: Optional[np.ndarray] = None,
 ) -> np.ndarray:

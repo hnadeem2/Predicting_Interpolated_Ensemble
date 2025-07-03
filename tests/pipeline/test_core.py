@@ -8,9 +8,11 @@ from pie.data_structs import Structure
 
 def make_mock_protein_chain(res_ids, res_names, chain_id="A"):
     atoms = []
+    atom_arr = AtomArray(len(res_ids))
     for i, res_id in enumerate(res_ids):
-        atoms.append(Atom([0, 0, 0], chain_id=chain_id, res_id=res_id, res_name=res_names[i]))
-    return AtomArray(atoms)
+        atom_arr[i] = Atom([0, 0, 0], chain_id=chain_id, res_id=res_id, res_name=res_names[i], atom_name="CA")
+    
+    return atom_arr
 
 
 def test_load_modeled_seq(monkeypatch):
@@ -24,7 +26,7 @@ def test_load_modeled_seq(monkeypatch):
     assert seq == "AG-K"
 
 
- def test_load_templates(monkeypatch, tmp_path):
+def test_load_templates(monkeypatch, tmp_path):
     fake_seq = "ACD"
     fake_npz = {"probs": np.ones((3, 21))}
 

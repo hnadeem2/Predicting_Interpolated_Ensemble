@@ -17,13 +17,15 @@ def dummy_structure(tmp_path):
     prob = np.random.rand(10, 21)
     prob /= prob.sum(axis=1, keepdims=True)
 
-    return Structure(
+    structure = Structure(
         identity="dummy",
         structure_path=path,
         sequence="A" * 10,
-        prob_dist=prob,
-        aligned_indices=np.arange(10)
+        prob_dist=prob
     )
+    structure.aligned_indices = np.arange(10)
+
+    return structure
 
 
 @patch("pie.graph.graph_building.md.load")

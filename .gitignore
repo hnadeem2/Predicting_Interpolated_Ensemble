@@ -1,15 +1,56 @@
-# gitignore
-
-# Ignore scratch
+# Ignore scratch directories
 /scratch/
 
 # Ignore ProteinMPNN setup
 /ProteinMPNN/
 
-# Ignore temp files
+# Ignore temp and intermediate files
 *.tmp
 *.ckpt
-*.pkltest_*/
-*__pycache__*/
-*.py[cod]
+*.pkl
 tests/tmp/
+
+# Ignore test artifacts and coverage
+.pytest_cache/
+.cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Ignore Python bytecode
+*.py[cod]
+
+# Ignore __pycache__ directories (recursively)
+__pycache__/
+
+# Ignore build artifacts
+/build/
+/dist/
+/*.egg-info/
+/*.egg
+/pip-wheel-metadata/
+pie.egg-info/
+
+# Ignore virtual environments
+env/
+venv/
+.venv/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Ignore VSCode config
+.vscode/
+
+# Ignore logs or crash reports
+*.log
+*.stackdump
+core
+
+# Ignore domain-specific outputs (if auto-generated)
+AtD14/
+PfHT1/

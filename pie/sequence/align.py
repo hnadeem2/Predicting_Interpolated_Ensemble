@@ -45,7 +45,7 @@ def read_alignment_indices(aln_file, ref_seq):
     msa = AlignIO.read(aln_file, "fasta")
 
     # Find the reference sequence in the alignment
-    ref_record = next((rec for rec in msa if rec.seq.ungap("-") == ref_seq), None)
+    ref_record = next((rec for rec in msa if rec.seq.replace("-", "") == ref_seq), None)
     if ref_record is None:
         raise ValueError("Reference sequence not found in alignment file.")
 

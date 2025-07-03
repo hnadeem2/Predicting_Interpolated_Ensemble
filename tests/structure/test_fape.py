@@ -30,7 +30,7 @@ def make_dummy_traj(n_residues=5):
 
     xyz = np.array(coords).reshape(1, n_residues * 3, 3)
     traj = md.Trajectory(xyz, topology)
-    traj.n_residues = n_residues  # Patch attribute since we use it
+    assert traj.n_residues == n_residues  # Patch attribute since we use it
     return traj
         
 

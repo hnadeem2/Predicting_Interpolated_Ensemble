@@ -6,12 +6,14 @@ from typing import List
 @dataclass
 class Structure:
     identity: str                                   # Identifier of the structure (either template name or round_{#}_struct_{#})
-    parents: List[Structure] = field(default=None)  # Structures mixed to produce this structure
-    parent_weights: List[float] = field(init=None)  # Weights used to mix parents' probabilities
     structure_path: Path                            # Path to PDB file
     sequence: str                                   # Amino acid sequence of the PDB structure
     prob_dist: np.ndarray                           # Shape (L, 21): residue identity probability distribution at each site
     aligned_indices: np.ndarray = field(init=False) # Maps sequence to reference indices
+    parents: List["Structure"] = field(default=None)  # Structures mixed to produce this structure
+    parent_weights: List[float] = field(init=None)  # Weights used to mix parents' probabilities
+
+
 
     def __post_init__(self):
         if not isinstance(self.prob_dist, np.ndarray):
