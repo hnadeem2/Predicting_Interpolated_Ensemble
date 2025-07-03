@@ -1,3 +1,4 @@
+import os
 from typing import List
 from pathlib import Path
 from biotite.structure.io import load_structure
