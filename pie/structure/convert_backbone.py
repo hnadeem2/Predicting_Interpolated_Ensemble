@@ -17,7 +17,7 @@ def extract_backbone_coords_to_pdb(structure: Structure, ref_seq: str, outdir: P
     """
     keep = {"N", "CA", "C", "O"}
     in_path = structure.structure_path
-    out_path = outdir / f"{structure.identifier}_backbone.pdb"
+    out_path = outdir / f"{structure.identity}_backbone.pdb"
     outdir.mkdir(parents=True, exist_ok=True)
 
     residue_index = -1  # Starts before first residue

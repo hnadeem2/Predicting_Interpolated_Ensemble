@@ -2,6 +2,7 @@ import argparse
 from pathlib import Path
 from pie.pipeline.core import run_round_master, load_templates
 from pie.io_utils import write_round_summary
+from pie.structure.convert_backbone import extract_backbone_coords_to_pdb, run_cg2all
 
 
 def getargs():
@@ -74,6 +75,12 @@ def getargs():
         help="Path to protein mpnn executable script (default: ./pmpnn.sh)."
     )
     parser.add_argument(
+        "--cg2all_script",
+        type=Path,
+        default=Path("./cg2all.sh"),
+        help="Path to protein cg2all executable script (default: ./cg2all.sh)."
+    )
+    parser.add_argument(
         "--device",
         type=str,
         choices=["cpu", "gpu"],
@@ -92,6 +99,11 @@ def getargs():
         choices=["server", "local", "empty"],
         default="server",
         help="MSA computation mode. Local is not implemented yet."
+    )
+    parser.add_argument(
+        "--cg2all",
+        action="store_true",
+        help="Run CG2ALL postprocessing to pack reference sequence side chains in generated backbones. (default: False)"
     )
 
     return parser.parse_args()
@@ -120,3 +132,9 @@ def main():
         print(f"Running round {num_round}")
         structures, cached_dist_mat, path = run_round_master(num_round, structures, cached_dist_mat, args)
         write_round_summary(structures, args, num_round, path)
+
+    if args.cg2all:
+        output_dir = Path(args.output_dir, "cg2all")
+        for structure in structures[2:]:
+            _ = extract_backbone_coords_to_pdb(structure, args.ref_seq, output_dir)
+        run_cg2all(output_dir, args.cg2all_script)
