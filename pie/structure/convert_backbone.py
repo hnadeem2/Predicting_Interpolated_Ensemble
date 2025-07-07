@@ -62,7 +62,7 @@ def run_cg2all(folder: Path, script_path: str = "cg2all.sh", device: str = "gpu"
     """
     folder = Path(folder).resolve()
     backbone_files = list(folder.glob("*_backbone.pdb"))
-    print(backbone_files)
+    
     run_device = "cuda" if device == "gpu" else "cpu"
 
     for in_pdb in tqdm(backbone_files, desc="Running CG2ALL"):
