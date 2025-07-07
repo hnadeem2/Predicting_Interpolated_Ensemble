@@ -1,4 +1,6 @@
 from pathlib import Path
+from tqdm import tqdm
+import subprocess
 from pie.data_structs import Structure  
 from pie.constants import ONE_TO_THREE
 
@@ -50,7 +52,7 @@ def extract_backbone_coords_to_pdb(structure: Structure, ref_seq: str, outdir: P
     return out_path
 
 
-def run_cg2all(folder: Path, script_path: str = "cg2all.sh"):
+def run_cg2all(folder: Path, script_path: str = "cg2all.sh", device: str = "gpu"):
     """
     Runs the cg2all script on each `_backbone.pdb` file in a folder to convert them to all-atom representations.
 
@@ -60,12 +62,13 @@ def run_cg2all(folder: Path, script_path: str = "cg2all.sh"):
     """
     folder = Path(folder).resolve()
     backbone_files = list(folder.glob("*_backbone.pdb"))
+    run_device = "cuda" if device == "gpu" else "cpu"
 
     for in_pdb in tqdm(backbone_files, desc="Running CG2ALL"):
         out_pdb = in_pdb.with_name(in_pdb.name.replace("_backbone.pdb", "_allatom.pdb"))
 
         try:
-            subprocess.run(["bash", script_path, str(in_pdb), str(out_pdb)],
+            subprocess.run(["bash", script_path, str(in_pdb), str(out_pdb), run_device],
                            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except subprocess.CalledProcessError:
             print(f"[ERROR] CG2ALL failed for {in_pdb.name}")

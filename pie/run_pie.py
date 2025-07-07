@@ -137,4 +137,4 @@ def main():
         output_dir = Path(args.output_dir, "cg2all")
         for structure in structures[2:]:
             _ = extract_backbone_coords_to_pdb(structure, args.ref_seq, output_dir)
-        run_cg2all(output_dir, args.cg2all_script)
+        run_cg2all(output_dir, args.cg2all_script, args.device)
