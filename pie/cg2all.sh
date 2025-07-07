@@ -1,4 +1,5 @@
-source activate cg2all # Environment must be available
+eval "$(conda shell.bash hook)" # Init conda
+conda activate cg2all # Environment must be available
 
 in_pdb="$1"
 out_pdb="$2"
