@@ -6,21 +6,33 @@ def extract_backbone_coordinates(traj, chain_id="A"):
 
     Args:
         traj: An MDTraj trajectory object.
-        chain_id: str. The chain identifier.
+        chain_id: str. The chain identifier (e.g., "A", "X", etc.)
 
     Returns:
         np.ndarray of shape (n_residues, 3, 3): 
         Array of backbone coordinates per residue. 
         Axis 0 = residues, axis 1 = atoms (N, CA, C), axis 2 = xyz.
     """
-    chain_idx = ord(chain_id) - ord('A')
+    # Find the correct chain index by scanning chain.chain_id
+    chain_list = list(traj.top.chains)
+    
+    matching_chains = [i for i, chain in enumerate(chain_list) if chain.chain_id == chain_id]
+
+    if not matching_chains:
+        raise ValueError(f"Chain ID '{chain_id}' not found in trajectory.")
+    chain_idx = matching_chains[0]
+
+    # Select atoms belonging to the matching chain
     atom_indices = traj.top.select(f"chainid == {chain_idx}")
     traj_chain = traj.atom_slice(atom_indices)
+
+    # Prepare to extract backbone atoms
     backbone_atoms = ['N', 'CA', 'C']
     atom_coors = np.zeros((traj_chain.n_residues, 3, 3))
     for i, a in enumerate(backbone_atoms):
         coors = traj_chain.xyz[0, traj_chain.top.select(f"name {a}"), :]
-        assert coors.shape[0] == traj_chain.n_residues, f"Expected {traj_chain.n_residues}, got {coors.shape[0]}"
+        if coors.shape[0] != traj_chain.n_residues:
+            raise ValueError(f"Expected {traj_chain.n_residues} residues with atom {a}, but found {coors.shape[0]}.")
         atom_coors[:, i, :] = coors
 
     return atom_coors

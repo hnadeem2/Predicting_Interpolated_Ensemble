@@ -23,6 +23,7 @@ def make_dummy_traj(n_residues=5):
 
     topology = md.Topology()
     chain = topology.add_chain()
+    chain.chain_id = "A"
     for i in range(n_residues):
         residue = topology.add_residue("ALA", chain)
         for name in atom_names:
