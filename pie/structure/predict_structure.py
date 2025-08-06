@@ -33,7 +33,7 @@ def query_colabfold(seqs, output_dir):
     )
 
     # Return paths to the expected A3M files
-    a3m_paths = [outdir / f"struct_{i}" / "a3m" / f"struct_{i}.a3m" for i in range(len(seqs))]
+    a3m_paths = [(outdir / f"struct_{i}" / "a3m" / f"struct_{i}.a3m").resolve() for i in range(len(seqs))]
     return a3m_paths
 
 
