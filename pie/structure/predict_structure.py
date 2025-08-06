@@ -2,11 +2,47 @@ import os
 import subprocess
 from pathlib import Path
 
+def query_colabfold(seqs, output_dir):
+    """
+    Construct a CSV file with sequences and query the ColabFold server using pie/msa/mmseqs_query.py
+
+
+    Args:
+        seqs (list of str): Protein sequences.
+        output_dir (Path): output directory.
+
+    Returns:
+        List[str]: Paths to A3M files containing MSAs.
+    """
+    # Construct CSV file
+    csv_file = "name,seqres\n"
+    for i, s in enumerate(seqs):
+        csv_file += f"struct_{i},{s}\n"
+
+    outdir = Path(output_dir) / "colabfold_msa"
+    outdir.mkdir(parents=True, exist_ok=True)
+
+    csv_outname = outdir / "query.csv"
+    with open(csv_outname, "w") as outfile:
+        outfile.write(csv_file)
+
+    # Run the MSA query script
+    subprocess.run(
+        ["python", "-m", "pie.msa.mmseqs_query", "--split", str(csv_outname), "--outdir", str(outdir)],
+        check=True
+    )
+
+    # Return paths to the expected A3M files
+    a3m_paths = [outdir / f"struct_{i}" / "a3m" / f"struct_{i}.a3m" for i in range(len(seqs))]
+    return a3m_paths
+
+
+
 def save_boltz_input(seqs, args, num_round):
     """
     Save sequences to FASTA files for Boltz input.
 
-    Parameters:
+    Args:
         seqs (list of str): Protein sequences.
         args: Argument object with .output_dir and .msa_mode
         num_round (int): Current round number.
@@ -14,23 +50,32 @@ def save_boltz_input(seqs, args, num_round):
     Returns:
         List[str]: Paths to the written FASTA files.
     """
-    base_dir = os.path.join(args.output_dir, f"round_{num_round}", "boltz", "input")
-    os.makedirs(base_dir, exist_ok=True)
+    base_dir = Path(args.output_dir) / f"round_{num_round}" / "boltz" / "input"
+    base_dir.mkdir(parents=True, exist_ok=True)
 
     fasta_paths = []
-    for i, seq in enumerate(seqs):
-        fasta_path = os.path.join(base_dir, f"struct_{i}.fa")
-        with open(fasta_path, "w") as f:
-            if args.msa_mode == "server":
-                f.write(">A|protein|\n")
-            elif args.msa_mode == "empty":
+
+    if args.msa_mode == "server":
+        a3m_paths = query_colabfold(seqs, base_dir)
+        for i, seq in enumerate(seqs):
+            fasta_path = base_dir / f"struct_{i}.fa"
+            with open(fasta_path, "w", encoding="utf-8") as f:
+                f.write(f">A|protein|{a3m_paths[i]}\n")
+                f.write(seq + "\n")
+            fasta_paths.append(fasta_path)
+
+    elif args.msa_mode == "empty":
+        for i, seq in enumerate(seqs):
+            fasta_path = base_dir / f"struct_{i}.fa"
+            with open(fasta_path, "w", encoding="utf-8") as f:
                 f.write(">A|protein|empty\n")
-            elif args.msa_mode == "local":
-                raise NotImplementError(f"{args.msa_mode} is not implemented.")
-            else:
-                raise ValueError(f"{args.msa_mode} is not a valid MSA mode.")
-            f.write(seq + "\n")
-        fasta_paths.append(fasta_path)
+                f.write(seq + "\n")
+            fasta_paths.append(fasta_path)
+
+    elif args.msa_mode == "local":
+        raise NotImplementedError(f"{args.msa_mode} is not implemented.")
+    else:
+        raise ValueError(f"{args.msa_mode} is not a valid MSA mode.")
 
     return fasta_paths
 
