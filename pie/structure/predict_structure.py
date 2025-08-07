@@ -56,7 +56,7 @@ def save_boltz_input(seqs, args, num_round):
     fasta_paths = []
 
     if args.msa_mode == "server":
-        a3m_paths = query_colabfold(seqs, base_dir)
+        a3m_paths = query_colabfold(seqs, Path(args.output_dir) / f"round_{num_round}" / "boltz")
         for i, seq in enumerate(seqs):
             fasta_path = base_dir / f"struct_{i}.fa"
             with open(fasta_path, "w", encoding="utf-8") as f:
