@@ -16,10 +16,10 @@ boltz predict "$input_path" \
     --recycling_steps "$recycling_steps" \
     --output_format "$output_format" \
     --override \
-    # --use_msa_server \
     --diffusion_samples "$diffusion_samples" \
     --preprocessing-threads "$preprocessing_threads" \
     # --cache "$cache" \
+    # --use_msa_server \
 
 
 
