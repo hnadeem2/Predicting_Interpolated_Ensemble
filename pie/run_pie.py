@@ -1,5 +1,6 @@
 import argparse
 from pathlib import Path
+from pie.data_structs import Global, Round
 from pie.pipeline.core import run_round_master, load_templates
 from pie.io_utils import write_round_summary
 from pie.structure.convert_backbone import extract_backbone_coords_to_pdb, run_cg2all
@@ -56,11 +57,17 @@ def getargs():
         default=10,
         help="Number of interpolation rounds (default: 10)."
     )
+    # parser.add_argument(
+    #     "--interpolation_steps",
+    #     type=int,
+    #     default=10,
+    #     help="Number of interpolated predictions per round (default: 10)."
+    # )
     parser.add_argument(
-        "--interpolation_steps",
+        "--min_edit_dist",
         type=int,
-        default=10,
-        help="Number of interpolated predictions per round (default: 10)."
+        default=1,
+        help="Minimum edit distance between sequences considered in a single round (default: 1 = all sequences)."
     )
     parser.add_argument(
         "--boltz_script",
@@ -112,6 +119,8 @@ def getargs():
 def main():
     args = getargs()
 
+    # Init data for first round
+
     pmpnn_kwargs = {
             "output_dir": Path(args.output_dir, "round_0", "pmpnn", "output"),
             "mpnn_path": args.pmpnn_path,
@@ -123,18 +132,29 @@ def main():
         args.ref_seq, 
         [args.chain_id_1, args.chain_id_2],
         **pmpnn_kwargs,
-        )
+    )
 
-    write_round_summary(structures, args, 0, None)
-    cached_dist_mat = None
+    global_tracker = Global()
+    round_0 = Round(round_num=0, direction="A", parent_1=structures[0], parent_2=structures[1])
+    global_tracker.rounds = [(round_0)]
 
+    # write_round_summary(structures, args, 0, None)
+
+    # Run rounds
     for num_round in range(1, args.rounds + 1):
         print(f"Running round {num_round}")
-        structures, cached_dist_mat, path = run_round_master(num_round, structures, cached_dist_mat, args)
-        write_round_summary(structures, args, num_round, path)
+        run_round_master(num_round, global_tracker, args)
+        # write_round_summary(structures, args, num_round, path)
 
     if args.cg2all:
+        # Gather all generated sequences
+        gen_structures = []
+        for gen_round in global_tracker.rounds:
+            for gen_struct in gen_round.generated_structures:
+                gen_structures.append(gen_struct)
+
+        # Run cg2all
         output_dir = Path(args.output_dir, "cg2all")
-        for structure in structures[2:]:
+        for structure in gen_structures:
             _ = extract_backbone_coords_to_pdb(structure, args.ref_seq, output_dir)
         run_cg2all(output_dir, args.cg2all_script, args.device)

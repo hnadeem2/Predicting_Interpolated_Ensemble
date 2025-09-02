@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 import numpy as np
-from typing import List, Optional
+from typing import Literal, List, Set, Tuple, Optional
 
 @dataclass
 class Structure:
@@ -26,3 +26,21 @@ class Structure:
 
         # Default aligned_indices: identity mapping
         self.aligned_indices = np.arange(L)
+
+
+@dataclass
+class Round:
+    round_num: int
+    direction: Literal["A", "B"] # A if template 1 is an anchor, B if template 2 is an anchor
+    parent_1: Structure
+    parent_2: Structure
+    sequences: Optional[List[str]] = None # Should be presorted
+    edit_distances: Optional[List[int]] = None
+    weights: Optional[List[float]] = None # Lambda values
+    generated_structures: Optional[List[Structure]] = None
+
+
+@dataclass
+class Global:
+    rounds: Optional[List[Tuple[Round]]] = None
+    sequence_buffer: Optional[Dict[str, Structure]] = None
