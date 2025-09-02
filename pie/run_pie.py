@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 from pie.data_structs import Global, Round
 from pie.pipeline.core import run_round_master, load_templates
-from pie.io_utils import write_round_summary
+from pie.io_utils import write_summary
 from pie.structure.convert_backbone import extract_backbone_coords_to_pdb, run_cg2all
 
 
@@ -57,12 +57,6 @@ def getargs():
         default=10,
         help="Number of interpolation rounds (default: 10)."
     )
-    # parser.add_argument(
-    #     "--interpolation_steps",
-    #     type=int,
-    #     default=10,
-    #     help="Number of interpolated predictions per round (default: 10)."
-    # )
     parser.add_argument(
         "--min_edit_dist",
         type=int,
@@ -134,17 +128,17 @@ def main():
         **pmpnn_kwargs,
     )
 
-    global_tracker = Global()
+    global_tracker = GlobalTracker()
     round_0 = Round(round_num=0, direction="A", parent_1=structures[0], parent_2=structures[1])
     global_tracker.rounds = [(round_0)]
 
-    # write_round_summary(structures, args, 0, None)
+    write_summary(global_tracker)
 
     # Run rounds
     for num_round in range(1, args.rounds + 1):
         print(f"Running round {num_round}")
         run_round_master(num_round, global_tracker, args)
-        # write_round_summary(structures, args, num_round, path)
+        write_summary(global_tracker)
 
     if args.cg2all:
         # Gather all generated sequences

@@ -5,7 +5,7 @@ from typing import Literal, List, Set, Tuple, Optional
 
 @dataclass
 class Structure:
-    identity: str                                   # Identifier of the structure (either template name or round_{#}_struct_{#})
+    identity: str                                   # Identifier of the structure (either template name or round_{#}{direction}_struct_{#})
     structure_path: Path                            # Path to PDB file
     sequence: str                                   # Amino acid sequence of the PDB structure
     prob_dist: np.ndarray                           # Shape (L, 21): residue identity probability distribution at each site
@@ -41,6 +41,6 @@ class Round:
 
 
 @dataclass
-class Global:
+class GlobalTracker:
     rounds: Optional[List[Tuple[Round]]] = None
     sequence_buffer: Optional[Dict[str, Structure]] = None

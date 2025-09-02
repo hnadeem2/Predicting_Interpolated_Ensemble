@@ -4,13 +4,12 @@ from biotite.structure.io import load_structure
 from biotite.structure import filter_amino_acids
 from biotite.sequence import ProteinSequence
 import numpy as np
-from pie.data_structs import Structure
+from pie.data_structs import Structure, Round
+from pie.sequence.interpolation import find_crit_lambdas, find_interpolated_sequences, find_anchors
 from pie.sequence.predict_sequence import run_pmpnn
 from pie.sequence.align import read_alignment_indices, compute_alignment_indices
 from pie.sequence.sequence_utils import combine_features_from_indices, get_max_likelihood_seq
 from pie.structure.predict_structure import save_boltz_input, run_boltz
-from pie.graph.graph_building import compute_pairwise_fape, shortest_fape_path_mst
-from pie.structure.fape import fape_from_alignment_maps as fape_fn
 from pie.constants import PMPNN_ALPHABET
 
 
@@ -123,76 +122,85 @@ def load_templates(template_paths: List[Path], ref_seq: str, chain_ids: List[str
     return structures
 
 
-def find_anchors(structures, cached_dist_mat=None):
-
-    # Get FAPE matrix
-    fape_matrix = compute_pairwise_fape(structures, fape_fn, cached_dist_mat)
-
-    # Find path and gap pair
-    path, gap_idx = shortest_fape_path_mst(fape_matrix, 0, 1) # 0 and 1 are the two user-provided templates
-
-    return path, [structures[gap_idx[0]], structures[gap_idx[1]]], fape_matrix
-
-
-def run_round_master(num_round, structures, cached_dist_mat, args):
+def run_round_master(num_round, global_tracker, args):
     
     # Find anchors
-    path, struct_anchors, fape_matrix = find_anchors(structures, cached_dist_mat)
+    struct_anchors = find_anchors(num_round, global_tracker)
+    directions =  ["A", "B"] # Which user-provided template we'll use at each step
 
-    # Compute mixtures
-    prob_arrays = [sa.prob_dist for sa in struct_anchors]
-    index_maps = [sa.aligned_indices for sa in struct_anchors]
-    weights = np.linspace(0, 1, args.interpolation_steps)
-    mixed_probs = [combine_features_from_indices(prob_arrays, index_maps, len(args.ref_seq), weights=[w, 1-w]) for w in weights]
+    # Run for each set of anchors
+    new_rounds = []
+    for anchor_set, direction in zip(struct_anchors, directions):
+        # Init new round
+        new_round = Round(round_num=num_round, direction=direction, parent_1=anchor_set[0], parent_2=anchor_set[1])
 
-    # Find max likelihood sequences
-    max_like_seqs = [get_max_likelihood_seq(mp, PMPNN_ALPHABET) for mp in mixed_probs]
+        # Determine sequences to fold
+        crit_lambdas = find_crit_lambdas(anchor_set[0], anchor_set[1])
+        pruned_seqs = find_interpolated_sequences(crit_lambdas, anchor_set[0], anchor_set[1], args.min_edit)
+        # Filter sequences to avoid pre-existing ones
+        final_sequences = {k: v for k, v in pruned_seqs.items() if k not in global_tracker.sequence_buffer}
+        # Warn in case no new sequences are avilable and terminate early
+        if not final_sequences:
+            raise UserWarning(f"Round {num_round}{direction} did not yield new sequences. Moving on...")
+            new_round.sequences = []
+            new_round.edit_distances = []
+            new_round.weights = []
+            new_round.generated_structures = []
+            global_tracker.rounds.append(new_round)
+            continue
 
-    # Save these sequences as FASTA files and run Boltz
-    fasta_paths = save_boltz_input(max_like_seqs, args, num_round) 
-    fasta_paths_dir = Path(fasta_paths[0]).parent
-    # assert all(os.path.dirname(f) == os.path.dirname(fasta_paths_dir) for f in fasta_paths), "Not all files are in the same directory"
-    
-    boltz_kwargs = {
-        "output_dir": Path(args.output_dir, f"round_{num_round}", "boltz", "output"),
-        "boltz_script": args.boltz_script,
-        "accelerator": args.device,
-    }
+        # Save these sequences as FASTA files and run Boltz
+        max_like_seqs = list(final_sequences.keys())
+        fasta_paths = save_boltz_input(max_like_seqs, args, num_round, direction) 
+        fasta_paths_dir = Path(fasta_paths[0]).parent
 
-    pdb_paths = run_boltz(fasta_paths_dir, **boltz_kwargs)
-
-    # Run ProteinMPNN
-    
-    prob_dists = []
-    for i, pdb_path in enumerate(pdb_paths):
-        pmpnn_kwargs = {
-            "output_dir": Path(args.output_dir, f"round_{num_round}", "pmpnn", "output", f"struct_{i}"),
-            "mpnn_path": args.pmpnn_path,
-            "pmpnn_script": args.pmpnn_script,
+        boltz_kwargs = {
+            "output_dir": Path(args.output_dir, f"round_{num_round}{direction}", "boltz", "output"),
+            "boltz_script": args.boltz_script,
+            "accelerator": args.device,
         }
 
-        _, npz_path = run_pmpnn(pdb_path, **pmpnn_kwargs)
-        npz_data = np.load(npz_path)
-        prob_dist = np.squeeze(npz_data["probs"])
-        prob_dists.append(prob_dist)
+        pdb_paths = run_boltz(fasta_paths_dir, **boltz_kwargs)
 
-    # Create new Structure objects
-    new_structs: List[Structure] = []
-    for i, (structure_path, sequence, prob_dist, w) in enumerate(zip(pdb_paths, max_like_seqs, prob_dists, weights)):
-        identity = f"round_{num_round}_struct_{i}"
-        parent_weights = [w, 1-w]
+        # Run ProteinMPNN
+    
+        prob_dists = []
+        for i, pdb_path in enumerate(pdb_paths):
+            pmpnn_kwargs = {
+                "output_dir": Path(args.output_dir, f"round_{num_round}{direction}", "pmpnn", "output", f"struct_{i}"),
+                "mpnn_path": args.pmpnn_path,
+                "pmpnn_script": args.pmpnn_script,
+            }
 
-        new_struct = Structure(
-            identity=identity,
-            parents=struct_anchors,
-            parent_weights=parent_weights,
-            structure_path=structure_path,
-            sequence=sequence,
-            prob_dist=prob_dist,
-        )
+            _, npz_path = run_pmpnn(pdb_path, **pmpnn_kwargs)
+            npz_data = np.load(npz_path)
+            prob_dist = np.squeeze(npz_data["probs"])
+            prob_dists.append(prob_dist)
 
-        new_structs.append(new_struct)
+        # Create new Structure objects
+        new_structs: List[Structure] = []
+        weights = [v[0] for v in final_sequences.values()]
+        edit_distances = [v[1] for v in final_sequences.values()]
+        for i, (structure_path, sequence, prob_dist, w) in enumerate(zip(pdb_paths, max_like_seqs, prob_dists, weights)):
+            identity = f"round_{num_round}{direction}_struct_{i}"
+            parent_weights = [w, 1-w]
 
-    structures += new_structs
+            new_struct = Structure(
+                identity=identity,
+                parents=list(anchor_set),
+                parent_weights=parent_weights,
+                structure_path=structure_path,
+                sequence=sequence,
+                prob_dist=prob_dist,
+            )
 
-    return structures, fape_matrix, path
+            new_structs.append(new_struct)
+
+        new_round.sequences = max_like_seqs
+        new_round.edit_distances = edit_distances
+        new_round.weights = weights
+        new_round.generated_structures = new_structs
+        new_rounds.append(new_round)
+
+    global_tracker.rounds.extend(new_rounds)
+
