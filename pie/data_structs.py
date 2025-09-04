@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 import numpy as np
-from typing import Literal, List, Set, Tuple, Optional
+from typing import Literal, List, Set, Tuple, Dict, Optional
 
 @dataclass
 class Structure:
@@ -20,9 +20,33 @@ class Structure:
         if not isinstance(self.prob_dist, np.ndarray):
             raise TypeError("prob_dist must be a numpy array")
 
-        L = len(self.sequence.replace("-", ""))
-        if self.prob_dist.shape != (L, 21):
-            raise ValueError(f"prob_dist must have shape ({L}, 21), got {self.prob_dist.shape}")
+        L = len(self.sequence)
+        N = self.prob_dist.shape[0]
+
+        if self.prob_dist.shape[1] != 21:
+            raise ValueError("prob_dist must have 21 columns (AA + gap/unknown)")
+
+        # Case 1: prob_dist already matches full sequence length
+        if N == L:
+            pass  # nothing to do
+
+        # Case 2: prob_dist matches gapless sequence -> expand with "X" at gaps
+        elif N == len(self.sequence.replace("-", "")):
+            new_prob_dist = np.zeros((L, 21))
+            j = 0
+            for i, aa in enumerate(self.sequence):
+                if aa == "-":
+                    new_prob_dist[i, 20] = 1.0  # 'X' = unknown
+                else:
+                    new_prob_dist[i] = self.prob_dist[j]
+                    j += 1
+            self.prob_dist = new_prob_dist
+
+        else:
+            raise ValueError(
+                f"prob_dist length {N} does not match sequence length {L} "
+                f"or gapless length {len(self.sequence.replace('-', ''))}"
+            )
 
         # Default aligned_indices: identity mapping
         self.aligned_indices = np.arange(L)
@@ -42,5 +66,5 @@ class Round:
 
 @dataclass
 class GlobalTracker:
-    rounds: Optional[List[Tuple[Round]]] = None
-    sequence_buffer: Optional[Dict[str, Structure]] = None
+    rounds: List[Tuple[Round]] = field(default_factory=list)
+    sequence_buffer: Dict[str, Structure] = field(default_factory=dict)

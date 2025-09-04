@@ -2,6 +2,7 @@ import numpy as np
 from Levenshtein import distance as edit_distance 
 from Levenshtein import editops
 from pie.data_structs import Structure
+from pie.constants import PMPNN_ALPHABET
 
 
 def find_crit_lambdas(template_1: Structure, template_2: Structure):
@@ -25,7 +26,7 @@ def find_crit_lambdas(template_1: Structure, template_2: Structure):
     return lambda_crit_inter
 
 
-def compute_edit_distance(seqs, min_edit):
+def compute_edit_distance(seq_dict, min_edit):
     """
     Given an ordered dict {sequence: value}, compute edit distance to the previous sequence.
     Returns a new dict {sequence: (lambda, edit_distance)}, 
@@ -88,20 +89,20 @@ def find_anchors(num_round, global_tracker):
         return [(round_0.parent_1, round_0.parent_2)]
     elif num_round == 2:
         prev_round = global_tracker.rounds[num_round-1][0]
-        anchor_idx = np.argmax(prev_round.edit_distances) + 1
+        anchor_idx = np.argmax(prev_round.edit_distances) 
         common_anchor =  prev_round.generated_structures[anchor_idx]
         return [(round_0.parent_1, common_anchor), (round_0.parent_2, common_anchor)]       
     else:
         # First set of anchors
         prev_round_A = global_tracker.rounds[num_round-1][0]
         assert prev_round_A.direction == "A"
-        anchor_idx = np.argmax(prev_round_A.edit_distances) + 1
+        anchor_idx = np.argmax(prev_round_A.edit_distances) 
         anchor_set_A = (round_0.parent_1, prev_round_A.generated_structures[anchor_idx])
         
         # Second set of anchors
         prev_round_B = global_tracker.rounds[num_round-1][1]
         assert prev_round_B.direction == "B"
-        anchor_idx = np.argmax(prev_round_B.edit_distances) + 1
+        anchor_idx = np.argmax(prev_round_B.edit_distances) 
         anchor_set_B = (round_0.parent_2, prev_round_B.generated_structures[anchor_idx])
         return [anchor_set_A, anchor_set_B]
 

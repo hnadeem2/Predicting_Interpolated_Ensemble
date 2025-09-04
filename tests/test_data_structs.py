@@ -34,10 +34,10 @@ def test_structure_raises_if_prob_dist_not_array():
 
 
 def test_structure_raises_if_prob_dist_wrong_shape():
-    with pytest.raises(ValueError, match="prob_dist must have shape"):
+    with pytest.raises(ValueError, match="prob_dist length"):
         Structure(
             identity="bad_struct",
             structure_path=Path("file.pdb"),
-            sequence="ACDE",
+            sequence="ACDE--", # Gapless len = 4, gapped len = 6
             prob_dist=np.random.rand(5, 21)  # Should be shape (4, 21)
         )

@@ -88,12 +88,12 @@ def load_templates(template_paths: List[Path], ref_seq: str, chain_ids: List[str
 
     # Step 3: Compute alignment indices for each structure to the reference
     if aln_file is not None:
-        alignment_indices = read_alignment_indices(aln_file, ref_seq)
+        aligned_seqs, alignment_indices = read_alignment_indices(aln_file, ref_seq)
     else:
-        alignment_indices = compute_alignment_indices(sequences, ref_seq)
+        aligned_seqs, alignment_indices = compute_alignment_indices(sequences, ref_seq)
 
     # Step 4: Run ProteinMPNN and create Structure objects
-    for pdb_path, seq_str, aligned_idx, chain_id in zip(pdb_files, sequences, alignment_indices, chain_ids):
+    for pdb_path, seq_str, aligned_idx, chain_id in zip(pdb_files, aligned_seqs, alignment_indices, chain_ids):
         _, npz_path = run_pmpnn(pdb_path, pdb_path_chains=chain_id, **pmpnn_kwargs)
         npz_data = np.load(npz_path)
         prob_dist_raw = np.squeeze(npz_data["probs"])
@@ -127,7 +127,6 @@ def run_round_master(num_round, global_tracker, args):
     # Find anchors
     struct_anchors = find_anchors(num_round, global_tracker)
     directions =  ["A", "B"] # Which user-provided template we'll use at each step
-
     # Run for each set of anchors
     new_rounds = []
     for anchor_set, direction in zip(struct_anchors, directions):
@@ -136,7 +135,7 @@ def run_round_master(num_round, global_tracker, args):
 
         # Determine sequences to fold
         crit_lambdas = find_crit_lambdas(anchor_set[0], anchor_set[1])
-        pruned_seqs = find_interpolated_sequences(crit_lambdas, anchor_set[0], anchor_set[1], args.min_edit)
+        pruned_seqs = find_interpolated_sequences(crit_lambdas, anchor_set[0], anchor_set[1], args.min_edit_dist)
         # Filter sequences to avoid pre-existing ones
         final_sequences = {k: v for k, v in pruned_seqs.items() if k not in global_tracker.sequence_buffer}
         # Warn in case no new sequences are avilable and terminate early
@@ -202,5 +201,5 @@ def run_round_master(num_round, global_tracker, args):
         new_round.generated_structures = new_structs
         new_rounds.append(new_round)
 
-    global_tracker.rounds.extend(new_rounds)
+    global_tracker.rounds.append(tuple(new_rounds))
 

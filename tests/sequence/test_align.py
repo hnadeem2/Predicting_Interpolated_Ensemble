@@ -14,7 +14,8 @@ def test_compute_alignment_indices_basic():
         "ACDEFGHIK",  # identical
         "ACD-FGH-K"   # with gaps, will be aligned
     ]
-    results = compute_alignment_indices(seqs, ref_seq)
+    aligned_seqs, results = compute_alignment_indices(seqs, ref_seq)
+    print(aligned_seqs, results)
 
     for mapping in results:
         assert len(mapping) == len(ref_seq)
@@ -25,7 +26,7 @@ def test_compute_alignment_indices_with_gap():
     ref_seq = "ACDEF"
     seqs = ["ADEF"]
 
-    result = compute_alignment_indices(seqs, ref_seq)
+    aligned_seqs, result = compute_alignment_indices(seqs, ref_seq)
     assert len(result) == 1
     idx_map = result[0]
     # The C in ref_seq is missing from seqs[0], so should be None
@@ -51,7 +52,7 @@ def test_read_alignment_indices(tmp_path):
     # Remove the gaps to match the unaligned `ref_seq`
     ref_seq_nogap = "ACDEFGHIK"
 
-    idx_maps = read_alignment_indices(aln_path, ref_seq_nogap)
+    aligned_seqs, idx_maps = read_alignment_indices(aln_path, ref_seq_nogap)
 
     assert len(idx_maps) == 2
     for idx_map in idx_maps:

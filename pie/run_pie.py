@@ -1,6 +1,6 @@
 import argparse
 from pathlib import Path
-from pie.data_structs import Global, Round
+from pie.data_structs import GlobalTracker, Round
 from pie.pipeline.core import run_round_master, load_templates
 from pie.io_utils import write_summary
 from pie.structure.convert_backbone import extract_backbone_coords_to_pdb, run_cg2all
@@ -130,7 +130,7 @@ def main():
 
     global_tracker = GlobalTracker()
     round_0 = Round(round_num=0, direction="A", parent_1=structures[0], parent_2=structures[1])
-    global_tracker.rounds = [(round_0)]
+    global_tracker.rounds.append((round_0,))
 
     write_summary(global_tracker)
 

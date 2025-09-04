@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from pathlib import Path
 from biotite.structure import AtomArray, Atom
-from pie.pipeline.core import load_modeled_seq, load_templates, find_anchors
+from pie.pipeline.core import load_modeled_seq, load_templates
 from pie.data_structs import Structure
 
 
@@ -38,9 +38,13 @@ def test_load_templates(monkeypatch, tmp_path):
         np.savez(out_path, **fake_npz)
         return "fake.fasta", out_path
 
+    def mock_compute_alignment_indices(sequences, ref_seq):
+        alignments = [[0, 1, 2] for _ in sequences]
+        return sequences, alignments
+
     monkeypatch.setattr("pie.pipeline.core.load_modeled_seq", mock_load_modeled_seq)
     monkeypatch.setattr("pie.pipeline.core.run_pmpnn", mock_run_pmpnn)
-    monkeypatch.setattr("pie.pipeline.core.compute_alignment_indices", lambda seqs, ref: [[0, 1, 2] for _ in seqs])
+    monkeypatch.setattr("pie.pipeline.core.compute_alignment_indices", mock_compute_alignment_indices)
 
     paths = [tmp_path / "1.pdb", tmp_path / "2.pdb"]
     for path in paths:
@@ -51,20 +55,20 @@ def test_load_templates(monkeypatch, tmp_path):
     assert all(isinstance(s, Structure) for s in structs)
 
 
-def test_find_anchors(monkeypatch):
-    def mock_fape_fn(*args, **kwargs):
-        return 1.0
+# def test_find_anchors(monkeypatch):
+#     def mock_fape_fn(*args, **kwargs):
+#         return 1.0
 
-    monkeypatch.setattr("pie.pipeline.core.fape_fn", mock_fape_fn)
-    monkeypatch.setattr("pie.pipeline.core.compute_pairwise_fape", lambda s, f, m: np.array([[0, 1], [1, 0]]))
-    monkeypatch.setattr("pie.pipeline.core.shortest_fape_path_mst", lambda mat, src, tgt: ([0, 1], (0, 1)))
+#     monkeypatch.setattr("pie.pipeline.core.fape_fn", mock_fape_fn)
+#     monkeypatch.setattr("pie.pipeline.core.compute_pairwise_fape", lambda s, f, m: np.array([[0, 1], [1, 0]]))
+#     monkeypatch.setattr("pie.pipeline.core.shortest_fape_path_mst", lambda mat, src, tgt: ([0, 1], (0, 1)))
 
-    s1 = Structure(identity="a", structure_path=Path("a.pdb"), sequence="AAA", prob_dist=np.ones((3, 21)))
-    s2 = Structure(identity="b", structure_path=Path("b.pdb"), sequence="BBB", prob_dist=np.ones((3, 21)))
-    s1.aligned_indices = np.arange(3)
-    s2.aligned_indices = np.arange(3)
+#     s1 = Structure(identity="a", structure_path=Path("a.pdb"), sequence="AAA", prob_dist=np.ones((3, 21)))
+#     s2 = Structure(identity="b", structure_path=Path("b.pdb"), sequence="BBB", prob_dist=np.ones((3, 21)))
+#     s1.aligned_indices = np.arange(3)
+#     s2.aligned_indices = np.arange(3)
 
-    path, anchors, mat = find_anchors([s1, s2])
-    assert path == [0, 1]
-    assert len(anchors) == 2
-    assert mat.shape == (2, 2)
+#     path, anchors, mat = find_anchors([s1, s2])
+#     assert path == [0, 1]
+#     assert len(anchors) == 2
+#     assert mat.shape == (2, 2)

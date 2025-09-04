@@ -5,7 +5,10 @@ from Bio import AlignIO
 def compute_alignment_indices(sequences, ref_seq):
     """
     Align multiple sequences to a reference sequence.
-    Returns a list of index maps: ref_pos → seq_pos (or None for gaps).
+
+    Returns:
+        - aligned_seqs: list[str]  # each sequence aligned to ref_seq (with gaps)
+        - index_maps:  list[list[Optional[int]]]  # ref_pos -> seq_pos (None if gap)
     """
     aligner = PairwiseAligner()
     aligner.mode = 'global'
@@ -16,60 +19,69 @@ def compute_alignment_indices(sequences, ref_seq):
     aligner.query_open_gap_score = -1
     aligner.query_extend_gap_score = -0.1
 
+    aligned_seqs = []
     index_maps = []
 
     for seq in sequences:
-        alignment = aligner.align(ref_seq, seq)[0]
+        aln = aligner.align(ref_seq, seq)[0]
 
-        # Reconstruct aligned strings
-        ref_aln = []
-        seq_aln = []
-
+        # Reconstruct aligned strings from block coordinates
+        ref_aln_chars = []
+        seq_aln_chars = []
         ref_pos = 0
         seq_pos = 0
+        ref_blocks, seq_blocks = aln.aligned
 
-        for (ref_start, ref_end), (seq_start, seq_end) in zip(*alignment.aligned):
-            # Handle gaps in ref
-            while ref_pos < ref_start:
-                ref_aln.append(ref_seq[ref_pos])
-                seq_aln.append("-")
-                ref_pos += 1
-            # Handle gaps in seq
-            while seq_pos < seq_start:
-                ref_aln.append("-")
-                seq_aln.append(seq[seq_pos])
-                seq_pos += 1
-            # Aligned block
-            for i in range(ref_end - ref_start):
-                ref_aln.append(ref_seq[ref_start + i])
-                seq_aln.append(seq[seq_start + i])
-            ref_pos = ref_end
-            seq_pos = seq_end
+        for (r_start, r_end), (s_start, s_end) in zip(ref_blocks, seq_blocks):
+            # gaps in ref before this block
+            if r_start > ref_pos:
+                ref_aln_chars.extend(ref_seq[ref_pos:r_start])
+                seq_aln_chars.extend('-' * (r_start - ref_pos))
+            # gaps in seq before this block
+            if s_start > seq_pos:
+                ref_aln_chars.extend('-' * (s_start - seq_pos))
+                seq_aln_chars.extend(seq[seq_pos:s_start])
 
-        # Add any trailing residues
-        while ref_pos < len(ref_seq):
-            ref_aln.append(ref_seq[ref_pos])
-            seq_aln.append("-")
-            ref_pos += 1
-        while seq_pos < len(seq):
-            ref_aln.append("-")
-            seq_aln.append(seq[seq_pos])
-            seq_pos += 1
+            # aligned block
+            ref_aln_chars.extend(ref_seq[r_start:r_end])
+            seq_aln_chars.extend(seq[s_start:s_end])
 
-        # Build mapping
+            ref_pos = r_end
+            seq_pos = s_end
+
+        # trailing tails
+        if ref_pos < len(ref_seq):
+            ref_aln_chars.extend(ref_seq[ref_pos:])
+            seq_aln_chars.extend('-' * (len(ref_seq) - ref_pos))
+        if seq_pos < len(seq):
+            ref_aln_chars.extend('-' * (len(seq) - seq_pos))
+            seq_aln_chars.extend(seq[seq_pos:])
+
+        ref_aln = ''.join(ref_aln_chars)
+        seq_aln = ''.join(seq_aln_chars)
+
+        # Build ref_pos -> seq_pos map (0-based), advancing seq index across insertions
         ref_to_seq_idx = []
-        seq_counter = 0
+        seq_non_gap_idx = 0
         for r, s in zip(ref_aln, seq_aln):
-            if r == "-":
-                continue  # gap in reference = skip
-            if s == "-":
-                ref_to_seq_idx.append(None)
-            else:
-                ref_to_seq_idx.append(seq_counter)
-                seq_counter += 1
+            if r != '-':
+                if s == '-':
+                    ref_to_seq_idx.append(None)
+                else:
+                    ref_to_seq_idx.append(seq_non_gap_idx)
+            if s != '-':
+                seq_non_gap_idx += 1
+
+        # Sanity: map length matches ungapped ref length
+        if len(ref_to_seq_idx) != len(ref_seq):
+            raise RuntimeError(
+                f"Internal error: map length {len(ref_to_seq_idx)} != len(ref_seq) {len(ref_seq)}"
+            )
+
+        aligned_seqs.append(seq_aln)
         index_maps.append(ref_to_seq_idx)
 
-    return index_maps
+    return aligned_seqs, index_maps
 
 
 def read_alignment_indices(aln_file, ref_seq):
@@ -84,10 +96,12 @@ def read_alignment_indices(aln_file, ref_seq):
         raise ValueError("Reference sequence not found in alignment file.")
 
     ref_aln = str(ref_record.seq)
+    aligned_seqs = []
     alignment_indices = []
 
     for rec in msa:
         seq_aln = str(rec.seq)
+        aligned_seqs.append(seq_aln)
         ref_to_seq = []
         ref_pos, seq_pos = 0, 0
         for r, s in zip(ref_aln, seq_aln):
@@ -103,4 +117,4 @@ def read_alignment_indices(aln_file, ref_seq):
             raise ValueError(f"Aligned reference length ({len(ref_to_seq)}) does not match unaligned ref_seq length ({len(ref_seq)})")
         alignment_indices.append(ref_to_seq)
 
-    return alignment_indices[1:]
+    return aligned_seqs[1:], alignment_indices[1:] # Exclude ref

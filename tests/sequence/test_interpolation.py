@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 from pie.data_structs import Structure
-from pie.interpolation import (
+from pie.sequence.interpolation import (
     find_crit_lambdas,
     compute_edit_distance,
     find_interpolated_sequences,
@@ -17,7 +17,7 @@ def simple_structures():
     # Toy distributions for 3 residues and 3 amino acids
     prob_1 = np.array([
         [1, 0, 0],
-        [0.5, 0.5, 0],
+        [0.6, 0.4, 0],
         [0, 1, 0]
     ])
     prob_2 = np.array([

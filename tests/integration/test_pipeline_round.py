@@ -2,9 +2,9 @@ import os
 import pytest
 from pathlib import Path
 import numpy as np
-from unittest.mock import MagicMock
 
 from pie.pipeline.core import load_templates, run_round_master
+from pie.data_structs import GlobalTracker, Round
 
 
 @pytest.mark.slow
@@ -29,7 +29,7 @@ def test_pipeline_round():
         pmpnn_script = "pie/pmpnn.sh"
         boltz_script = "pie/boltz.sh"
         device = "gpu"
-        interpolation_steps = 2
+        min_edit_dist = 1
         msa_mode = "empty"
 
     args = Args()
@@ -47,17 +47,26 @@ def test_pipeline_round():
     # Run template loader
     structures = load_templates(template_paths, ref_seq, chain_ids, aln_file, **pmpnn_kwargs)
 
-    # Run pipeline round
-    structures, fape_matrix, path = run_round_master(
-        num_round=0,
-        structures=structures,
-        cached_dist_mat=None,
+    # Initialize global tracker and add initial templates as round 0
+    global_tracker = GlobalTracker()
+    initial_round = Round(round_num=0, direction="A", parent_1=structures[0], parent_2=structures[1])
+    initial_round.generated_structures = structures
+    global_tracker.rounds.append((initial_round,))
+
+    # Run pipeline round (num_round = 1 now, since 0 was initialization)
+    run_round_master(
+        num_round=1,
+        global_tracker=global_tracker,
         args=args
     )
 
     # Assertions
-    assert len(structures) == 4
-    for s in structures:
-        assert isinstance(s.prob_dist, np.ndarray)
-        assert s.prob_dist.shape[1] == 21
-        assert len(s.sequence.replace("-", "")) == s.prob_dist.shape[0]
+    assert len(global_tracker.rounds) >= 2  # initial + new round(s)
+
+    new_rounds = global_tracker.rounds[1:]
+    for rnd in new_rounds:
+        for rnd_dir in rnd:
+            for s in rnd_dir.generated_structures:
+                assert isinstance(s.prob_dist, np.ndarray)
+                assert s.prob_dist.shape[1] == 21
+                assert len(s.sequence.replace("-", "")) == s.prob_dist.shape[0]

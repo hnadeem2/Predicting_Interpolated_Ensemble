@@ -10,7 +10,7 @@ def test_save_boltz_input(tmp_path):
         msa_mode = "empty"
 
     seqs = ["ACDE", "FGHI"]
-    paths = save_boltz_input(seqs, Args(), num_round=1)
+    paths = save_boltz_input(seqs, Args(), num_round=1, direction="A")
 
     assert len(paths) == 2
     for i, path in enumerate(paths):
