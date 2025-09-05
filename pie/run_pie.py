@@ -132,20 +132,21 @@ def main():
     round_0 = Round(round_num=0, direction="A", parent_1=structures[0], parent_2=structures[1])
     global_tracker.rounds.append((round_0,))
 
-    write_summary(global_tracker)
+    write_summary(global_tracker, args)
 
     # Run rounds
     for num_round in range(1, args.rounds + 1):
         print(f"Running round {num_round}")
         run_round_master(num_round, global_tracker, args)
-        write_summary(global_tracker)
+        write_summary(global_tracker, args)
 
     if args.cg2all:
         # Gather all generated sequences
         gen_structures = []
         for gen_round in global_tracker.rounds:
-            for gen_struct in gen_round.generated_structures:
-                gen_structures.append(gen_struct)
+            for gen_round_dir in gen_round:
+                for gen_struct in gen_round_dir.generated_structures:
+                    gen_structures.append(gen_struct)
 
         # Run cg2all
         output_dir = Path(args.output_dir, "cg2all")
