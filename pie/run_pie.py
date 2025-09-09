@@ -4,6 +4,7 @@ from pie.data_structs import GlobalTracker, Round
 from pie.pipeline.core import run_round_master, load_templates
 from pie.io_utils import write_summary
 from pie.structure.convert_backbone import extract_backbone_coords_to_pdb, run_cg2all
+from pie.structure.minimize import minimize_all_pdbs
 
 
 def getargs():
@@ -106,6 +107,11 @@ def getargs():
         action="store_true",
         help="Run CG2ALL postprocessing to pack reference sequence side chains in generated backbones. (default: False)"
     )
+    parser.add_argument(
+        "--minimize",
+        action="store_true",
+        help="Run OpenMM to minimize structure energy. Requires --cg2all. (default: False)"
+    )
 
     return parser.parse_args()
 
@@ -153,3 +159,8 @@ def main():
         for structure in gen_structures:
             _ = extract_backbone_coords_to_pdb(structure, args.ref_seq, output_dir)
         run_cg2all(output_dir, args.cg2all_script, args.device)
+
+    if args.cg2all and args.minimize:
+        input_dir = output_dir # From cg2all
+        output_dir = Path(args.output_dir, "minimized")
+        minimize_all_pdbs(input_dir, output_dir)
