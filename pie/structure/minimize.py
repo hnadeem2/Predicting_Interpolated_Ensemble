@@ -31,7 +31,7 @@ def minimize_pdb(pdb_file: Path, output_file: Path):
 def minimize_all_pdbs(input_dir: str | Path, output_dir: str | Path):
     """
     Minimize all PDB structures in input_dir and save them in output_dir
-    with '_min.pdb' suffix.
+    with '_min.pdb' suffix. If a file fails, print the error and continue.
     """
     input_dir = Path(input_dir)
     output_dir = Path(output_dir)
@@ -41,6 +41,9 @@ def minimize_all_pdbs(input_dir: str | Path, output_dir: str | Path):
 
     for pdb_file in tqdm(pdb_files, desc="Minimizing structures"):
         out_file = output_dir / f"{pdb_file.stem}_min.pdb"
-        minimize_pdb(pdb_file, out_file)
+        try:
+            minimize_pdb(pdb_file, out_file)
+        except Exception as e:
+            print(f"PDB {pdb_file.name} could not be minimized: {e}")
 
     print("All minimizations done.")
