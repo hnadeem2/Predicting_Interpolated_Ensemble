@@ -1,5 +1,6 @@
 import argparse
 from pathlib import Path
+from Bio import SeqIO
 from pie.data_structs import GlobalTracker, Round
 from pie.pipeline.core import run_round_master, load_templates
 from pie.io_utils import write_summary
@@ -13,8 +14,8 @@ def getargs():
     # Required arguments
     parser.add_argument(
         "ref_seq",
-        type=str,
-        help="Reference or canonical sequence to model."
+        type=Path,
+        help="Path to reference sequence in FASTA format. The first sequence will be used."
     )
     parser.add_argument(
         "template_1",
@@ -116,6 +117,18 @@ def getargs():
     return parser.parse_args()
 
 
+def read_fasta_first_seq(path: Path) -> str:
+    """
+    Read the first sequence from a FASTA file using Biopython.
+    Returns the sequence as a plain string.
+    """
+    with open(path, "r") as f:
+        records = list(SeqIO.parse(f, "fasta"))
+    if not records:
+        raise ValueError(f"No sequence found in FASTA file: {path}")
+    return str(records[0].seq)
+
+
 def main():
     args = getargs()
 
@@ -127,9 +140,11 @@ def main():
             "pmpnn_script": args.pmpnn_script,
         }
 
+    ref_seq = read_fasta_first_seq(args.ref_seq)
+
     structures = load_templates(
         [args.template_1, args.template_2], 
-        args.ref_seq, 
+        ref_seq, 
         [args.chain_id_1, args.chain_id_2],
         **pmpnn_kwargs,
     )
@@ -157,7 +172,7 @@ def main():
         # Run cg2all
         output_dir = Path(args.output_dir, "cg2all")
         for structure in gen_structures:
-            _ = extract_backbone_coords_to_pdb(structure, args.ref_seq, output_dir)
+            _ = extract_backbone_coords_to_pdb(structure, ref_seq, output_dir)
         run_cg2all(output_dir, args.cg2all_script, args.device)
 
     if args.cg2all and args.minimize:
