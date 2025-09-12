@@ -48,6 +48,12 @@ def getargs():
         help="Output directory (default: output)."
     )
     parser.add_argument(
+        "--ligands",
+        type=Path,
+        default=None,
+        help="Path to OPTIONAL ligand FASTA file (CCD or SMILES format). Default: None."
+    )
+    parser.add_argument(
         "--pmpnn_path",
         type=Path,
         default=Path("/opt/ProteinMPNN"),
@@ -141,6 +147,12 @@ def main():
         }
 
     ref_seq = read_fasta_first_seq(args.ref_seq)
+
+    args.ligands_str = None
+    if args.ligands is not None:
+        if not args.ligands.exists():
+            parser.error(f"Ligands file not found: {args.ligands}")
+        args.ligands_str = args.ligands.read_text(encoding="utf-8")
 
     structures = load_templates(
         [args.template_1, args.template_2], 

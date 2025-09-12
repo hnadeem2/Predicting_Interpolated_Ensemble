@@ -44,7 +44,7 @@ def save_boltz_input(seqs, args, num_round, direction):
 
     Args:
         seqs (list of str): Protein sequences.
-        args: Argument object with .output_dir and .msa_mode
+        args: Argument object with args.output_dir, args.msa_mode, and args.ligands
         num_round (int): Current round number.
 
     Returns:
@@ -62,6 +62,8 @@ def save_boltz_input(seqs, args, num_round, direction):
             with open(fasta_path, "w", encoding="utf-8") as f:
                 f.write(f">A|protein|{a3m_paths[i]}\n")
                 f.write(seq + "\n")
+                if args.ligands is not None:
+                    f.write(args.ligands_str.strip() + "\n")
             fasta_paths.append(fasta_path)
 
     elif args.msa_mode == "empty":
@@ -70,6 +72,8 @@ def save_boltz_input(seqs, args, num_round, direction):
             with open(fasta_path, "w", encoding="utf-8") as f:
                 f.write(">A|protein|empty\n")
                 f.write(seq + "\n")
+                if args.ligands is not None:
+                    f.write(args.ligands_str.strip() + "\n")
             fasta_paths.append(fasta_path)
 
     elif args.msa_mode == "local":

@@ -4,10 +4,12 @@ from pathlib import Path
 from pie.structure.predict_structure import save_boltz_input, run_boltz
 
 
-def test_save_boltz_input(tmp_path):
+def test_save_boltz_input_no_ligands(tmp_path):
+    """Test save_boltz_input without ligands (old behavior)."""
     class Args:
         output_dir = tmp_path
         msa_mode = "empty"
+        ligands_str = None  # No ligands
 
     seqs = ["ACDE", "FGHI"]
     paths = save_boltz_input(seqs, Args(), num_round=1, direction="A")
@@ -17,8 +19,34 @@ def test_save_boltz_input(tmp_path):
         path = Path(path)
         assert path.exists(), f"Expected file {path} does not exist."
         content = path.read_text()
-        assert content.startswith(">A|protein|")
+        assert content.startswith(">A|protein|empty")
         assert seqs[i] in content
+        # No ligands appended
+        assert len(content.strip().splitlines()) == 2  # header + sequence
+
+
+def test_save_boltz_input_with_ligands(tmp_path):
+    """Test save_boltz_input with ligands appended."""
+    class Args:
+        output_dir = tmp_path
+        msa_mode = "empty"
+        ligands_str = ">B|ccd\nGLC\n>C|smiles\nC1=CC=CC=C1\n"
+
+    seqs = ["ACDE", "FGHI"]
+    paths = save_boltz_input(seqs, Args(), num_round=1, direction="A")
+
+    assert len(paths) == 2
+    for i, path in enumerate(paths):
+        path = Path(path)
+        assert path.exists()
+        content = path.read_text()
+        assert content.startswith(">A|protein|empty")
+        assert seqs[i] in content
+        # Ligand content should appear
+        assert ">B|ccd" in content
+        assert "GLC" in content
+        assert ">C|smiles" in content
+        assert "C1=CC=CC=C1" in content
 
 
 def test_run_boltz(monkeypatch, tmp_path):
