@@ -9,6 +9,7 @@ def test_save_boltz_input_no_ligands(tmp_path):
     class Args:
         output_dir = tmp_path
         msa_mode = "empty"
+        ligands = None
         ligands_str = None  # No ligands
 
     seqs = ["ACDE", "FGHI"]
@@ -30,6 +31,7 @@ def test_save_boltz_input_with_ligands(tmp_path):
     class Args:
         output_dir = tmp_path
         msa_mode = "empty"
+        ligands = Path("a/path/")
         ligands_str = ">B|ccd\nGLC\n>C|smiles\nC1=CC=CC=C1\n"
 
     seqs = ["ACDE", "FGHI"]
