@@ -3,18 +3,15 @@ import numpy as np
 import subprocess
 import os
 import sys
+import json
 
-def run_Boltz(input_path,
+
+def run_ESM(input_seq,
               round_no,
               output_dir,
               lambda_param,
-              cache_dir,
-              boltz_template="boltz_template.sh",
-              accelerator='gpu',
-              recycling_steps=3,
-              output_format='pdb',
-              diffusion_samples=1,
-              preprocessing_threads=12):
+              esm_env='esm3',
+              esm_template='esm3_template.py'):
     """
     Generates a PDB model using Boltz.
 
@@ -37,38 +34,22 @@ def run_Boltz(input_path,
     Raises:
         FileNotFoundError: If the expected PDB output is not found.
     """
-    script_path = boltz_template
 
-    direction = os.path.basename(output_dir).split('_')[-1]
-    shared_cache = cache_dir
-    os.makedirs(shared_cache, exist_ok=True)
-
-    subprocess.run([
-        'bash',
-        script_path,
-        input_path,
-        output_dir,
-        shared_cache,
-        accelerator,
-        str(recycling_steps),
-        output_format,
-        str(diffusion_samples),
-        str(preprocessing_threads)
-    ], check=True)
-
-    fasta_base = os.path.splitext(os.path.basename(input_path))[0]
-    pdb_path = os.path.join(
-        output_dir,
-        f"boltz_results_{fasta_base}",
-        "predictions",
-        fasta_base,
-        f"{fasta_base}_model_0.pdb"
+    os.makedirs(output_dir, exist_ok=True)
+    subprocess.run(
+        f"conda run -n {esm_env} python3 {esm_template} {input_seq} {output_dir} {lambda_param}",
+        shell=True,
+        check=True
     )
-
-    if not os.path.exists(pdb_path):
-        raise FileNotFoundError(f"Expected Boltz output {pdb_path} not found.")
     
-    return pdb_path
+    # Read the JSON output file
+    output_json_path = f"{output_dir}/esm3_output.json"
+    with open(output_json_path, 'r') as f:
+        output_data = json.load(f)
+    
+    protein_path = output_data["protein_path"]
+    
+    return protein_path
 
 
 def run_ProteinMPNN(pdb_path,
@@ -126,31 +107,18 @@ def mix_prob(path_to_prob1, path_to_prob2, lambda_param, round_no, output_dir, c
     Returns:
         str: Path to the generated FASTA file.
     """
-    if '4IH4' in os.path.basename(path_to_prob1):
-         prob1 = fix_ATD_seq_prob(np.squeeze(np.load(path_to_prob1)['probs']))
-    else:
-         prob1 = np.squeeze(np.load(path_to_prob1)['probs'])
- 
-    if '4IH4' in os.path.basename(path_to_prob2):
-         prob2 = fix_ATD_seq_prob(np.squeeze(np.load(path_to_prob2)['probs']))
-    else:
-         prob2 = np.squeeze(np.load(path_to_prob2)['probs'])
+
+    prob1 = np.squeeze(np.load(path_to_prob1)['probs'])
+    prob2 = np.squeeze(np.load(path_to_prob2)['probs'])
  
      # Mix the probabilities
-
     mixed_prob = lambda_param * prob1 + (1 - lambda_param) * prob2
 
     seq = sequence_list()
     ml_seq_idx = np.argmax(mixed_prob, axis=1)
     ml_seq = ''.join([seq[i] for i in ml_seq_idx])
 
-    fasta_dir = f'{output_dir}/fasta_Boltz_input_{lambda_param}/round{round_no}_{label}'
-    os.makedirs(fasta_dir, exist_ok=True)
-
-    fasta_path = f'{fasta_dir}/mixed_fasta_round{round_no}.fasta'
-    fasta_from_seq(sequence=ml_seq, chain_dict=chain_dict, filename=fasta_path)
-    
-    return fasta_path
+    return ml_seq #fasta_path
 
 
 def main(rounds, lambda_param, s1_pdb, s2_pdb, pmpnn_run_path, output_dir):
@@ -191,24 +159,23 @@ def main(rounds, lambda_param, s1_pdb, s2_pdb, pmpnn_run_path, output_dir):
                                            output_dir=f'{output_dir}/pMPNN_output_{lambda_param}/{direction}_changing',
                                            mpnn_path=pmpnn_run_path)
 
-        cache_dir = f"{output_dir}/cache"
+        #cache_dir = f"{output_dir}/cache"
         for round_num in range(1, ROUNDS + 1):
             print(f"\n=== Round {round_num} ({direction}) ===")
 
-            round_output_dir = f'{output_dir}/Boltz_output_{lambda_param}/round{round_num}_{direction}'
+            round_output_dir = f'{output_dir}/ESM_output_{lambda_param}/round{round_num}_{direction}'
 
-            fasta_path = mix_prob(anchor_prob, changing_prob,
+            mixed_seq = mix_prob(anchor_prob, changing_prob,
                                   lambda_param=lambda_param,
                                   round_no=round_num,
                                   label=direction,
                                   output_dir=output_dir,
                                   chain_dict=chain_dict)
 
-            new_pdb_path = run_Boltz(input_path=fasta_path,
-                                     round_no=round_num,
-                                     output_dir=round_output_dir,
-                                     lambda_param=lambda_param,
-                                     cache_dir=cache_dir)
+            new_pdb_path = run_ESM(input_seq=mixed_seq,
+                                   round_no=round_num,
+                                   output_dir=round_output_dir,
+                                   lambda_param=lambda_param)
 
             latest_output_dir = f'{output_dir}/pMPNN_output_{lambda_param}/round{round_num}_{direction}_mpnn'
             new_seq_path, latest_prob_path = run_ProteinMPNN(pdb_path=new_pdb_path,

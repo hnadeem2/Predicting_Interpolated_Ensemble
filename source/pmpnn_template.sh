@@ -1,5 +1,5 @@
-source activate pmpnn
-                     
+source ~/anaconda3/etc/profile.d/conda.sh
+conda activate pmpnn
 pdb_path="$1"
 output_dir="$2"
 sampling_temp="$3"

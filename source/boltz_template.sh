@@ -1,5 +1,6 @@
 
-source activate boltz
+source ~/anaconda3/etc/profile.d/conda.sh
+conda activate pmpnn
 
 input_path="$1"
 output_dir="$2"
