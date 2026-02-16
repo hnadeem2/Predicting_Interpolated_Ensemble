@@ -1,0 +1,816 @@
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: 2KXL_chain_A_fixed
+1 sequences of length 142 generated in 0.7867 seconds
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: 2K0G_chain_A_fixed
+1 sequences of length 142 generated in 0.7866 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 320398.22it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:06,  1.13it/s] 50%|█████     | 4/8 [00:01<00:00,  4.99it/s] 88%|████████▊ | 7/8 [00:01<00:00,  8.65it/s]100%|██████████| 8/8 [00:01<00:00,  6.79it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round1_A_0.48_plddt_0.93_structure
+1 sequences of length 142 generated in 0.4632 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 454555.11it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.79it/s] 75%|███████▌  | 6/8 [00:00<00:00, 11.58it/s]100%|██████████| 8/8 [00:00<00:00, 11.43it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round2_A_0.48_plddt_0.91_structure
+1 sequences of length 142 generated in 0.4725 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 475642.72it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.81it/s] 88%|████████▊ | 7/8 [00:00<00:00, 13.32it/s]100%|██████████| 8/8 [00:00<00:00, 11.62it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round3_A_0.48_plddt_0.9_structure
+1 sequences of length 142 generated in 0.4884 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 488225.86it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.79it/s] 75%|███████▌  | 6/8 [00:00<00:00, 11.62it/s]100%|██████████| 8/8 [00:00<00:00, 11.48it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round4_A_0.48_plddt_0.9_structure
+1 sequences of length 142 generated in 0.4635 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 452326.90it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.80it/s] 75%|███████▌  | 6/8 [00:00<00:00, 11.59it/s]100%|██████████| 8/8 [00:00<00:00, 11.46it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round5_A_0.48_plddt_0.93_structure
+1 sequences of length 142 generated in 0.4638 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 490822.81it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.81it/s] 88%|████████▊ | 7/8 [00:00<00:00, 13.21it/s]100%|██████████| 8/8 [00:00<00:00, 11.54it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round6_A_0.48_plddt_0.9_structure
+1 sequences of length 142 generated in 0.4621 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 452326.90it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.82it/s] 88%|████████▊ | 7/8 [00:00<00:00, 13.38it/s]100%|██████████| 8/8 [00:00<00:00, 11.69it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round7_A_0.48_plddt_0.94_structure
+1 sequences of length 142 generated in 0.4695 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 468399.43it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.76it/s] 75%|███████▌  | 6/8 [00:00<00:00, 11.44it/s]100%|██████████| 8/8 [00:00<00:00, 11.28it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round8_A_0.48_plddt_0.94_structure
+1 sequences of length 142 generated in 0.4949 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 480597.33it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.79it/s] 75%|███████▌  | 6/8 [00:00<00:00, 11.58it/s]100%|██████████| 8/8 [00:00<00:00, 11.44it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round9_A_0.48_plddt_0.92_structure
+1 sequences of length 142 generated in 0.4689 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 466033.78it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.82it/s] 88%|████████▊ | 7/8 [00:00<00:00, 13.31it/s]100%|██████████| 8/8 [00:00<00:00, 11.62it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round10_A_0.48_plddt_0.95_structure
+1 sequences of length 142 generated in 0.4606 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 483113.55it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.83it/s] 88%|████████▊ | 7/8 [00:00<00:00, 13.36it/s]100%|██████████| 8/8 [00:00<00:00, 11.67it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round11_A_0.48_plddt_0.95_structure
+1 sequences of length 142 generated in 0.486 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 463691.90it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.76it/s] 88%|████████▊ | 7/8 [00:00<00:00, 12.99it/s]100%|██████████| 8/8 [00:00<00:00, 11.33it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round12_A_0.48_plddt_0.96_structure
+1 sequences of length 142 generated in 0.4843 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 459078.05it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.83it/s] 88%|████████▊ | 7/8 [00:00<00:00, 13.41it/s]100%|██████████| 8/8 [00:00<00:00, 11.72it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round13_A_0.48_plddt_0.96_structure
+1 sequences of length 142 generated in 0.4617 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 475642.72it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.82it/s] 88%|████████▊ | 7/8 [00:00<00:00, 13.38it/s]100%|██████████| 8/8 [00:00<00:00, 11.68it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round14_A_0.48_plddt_0.93_structure
+1 sequences of length 142 generated in 0.4584 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 475642.72it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.82it/s] 88%|████████▊ | 7/8 [00:00<00:00, 13.35it/s]100%|██████████| 8/8 [00:00<00:00, 11.67it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round15_A_0.48_plddt_0.93_structure
+1 sequences of length 142 generated in 0.4758 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 427197.63it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.82it/s] 88%|████████▊ | 7/8 [00:00<00:00, 13.31it/s]100%|██████████| 8/8 [00:00<00:00, 11.64it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round16_A_0.48_plddt_0.93_structure
+1 sequences of length 142 generated in 0.4679 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 461373.44it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.81it/s] 88%|████████▊ | 7/8 [00:00<00:00, 13.30it/s]100%|██████████| 8/8 [00:00<00:00, 11.61it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round17_A_0.48_plddt_0.94_structure
+1 sequences of length 142 generated in 0.474 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 389344.68it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.82it/s] 75%|███████▌  | 6/8 [00:00<00:00, 11.76it/s]100%|██████████| 8/8 [00:00<00:00, 11.60it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round18_A_0.48_plddt_0.95_structure
+1 sequences of length 142 generated in 0.4645 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 445771.44it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:04,  1.73it/s] 75%|███████▌  | 6/8 [00:00<00:00, 11.23it/s]100%|██████████| 8/8 [00:00<00:00, 11.08it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round19_A_0.48_plddt_0.95_structure
+1 sequences of length 142 generated in 0.4704 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 81949.10it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:04,  1.63it/s] 75%|███████▌  | 6/8 [00:00<00:00, 10.72it/s]100%|██████████| 8/8 [00:00<00:00, 10.58it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round20_A_0.48_plddt_0.93_structure
+1 sequences of length 142 generated in 0.4723 seconds
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: 2K0G_chain_A_fixed
+1 sequences of length 142 generated in 0.4616 seconds
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: 2KXL_chain_A_fixed
+1 sequences of length 142 generated in 0.4756 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 470789.22it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.82it/s] 88%|████████▊ | 7/8 [00:00<00:00, 13.33it/s]100%|██████████| 8/8 [00:00<00:00, 11.65it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round1_B_0.48_plddt_0.92_structure
+1 sequences of length 142 generated in 0.4625 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 466033.78it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.83it/s] 88%|████████▊ | 7/8 [00:00<00:00, 13.36it/s]100%|██████████| 8/8 [00:00<00:00, 11.68it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round2_B_0.48_plddt_0.96_structure
+1 sequences of length 142 generated in 0.4612 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 485656.25it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.83it/s] 88%|████████▊ | 7/8 [00:00<00:00, 13.40it/s]100%|██████████| 8/8 [00:00<00:00, 11.70it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round3_B_0.48_plddt_0.95_structure
+1 sequences of length 142 generated in 0.4678 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 498782.10it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.81it/s] 75%|███████▌  | 6/8 [00:00<00:00, 11.63it/s]100%|██████████| 8/8 [00:00<00:00, 11.49it/s]
+
+Running esm3 for structure generation
+
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: round4_B_0.48_plddt_0.96_structure
+1 sequences of length 142 generated in 0.4693 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 303535.16it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:03,  1.81it/s] 88%|████████▊ | 7/8 [00:00<00:00, 13.34it/s]100%|██████████| 8/8 [00:00<00:00, 11.65it/s]
+Traceback (most recent call last):
+  File "/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/esm3_template.py", line 34, in <module>
+    protein.to_pdb(protein_path)
+  File "/home/hassan/.local/lib/python3.10/site-packages/esm/sdk/api.py", line 123, in to_pdb
+    protein_complex.to_pdb(pdb_path)
+  File "/home/hassan/.local/lib/python3.10/site-packages/esm/utils/structure/protein_complex.py", line 273, in to_pdb
+    f.write(path)
+  File "/home/hassan/.local/lib/python3.10/site-packages/biotite/file.py", line 138, in write
+    with open(file, "w") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '../test_CNBD/model_output/ESM_output_0.48/round5_B/round5_B_0.48_plddt_0.97_structure.pdb'
+
+ERROR conda.cli.main_run:execute(124): `conda run python3 esm3_template.py PEPAEGAAELAERAAAIAAVPLFALATPEVLAALAAAAEVRRYAAGEVIVRAGEPVDALYLILSGRVRLVGPRERVLGPGDFFGLVGVVTGEPARVDAVALEDTKLLAIPAEAVRAALAANPALAARARALAARILAGEPLE ../test_CNBD/model_output/ESM_output_0.48/round5_B 0.48` failed. (See above for error)
+Running esm3 for structure generation
+
+
+Starting interpolation direction A...
+
+=== Round 1 (A) ===
+
+=== Round 2 (A) ===
+
+=== Round 3 (A) ===
+
+=== Round 4 (A) ===
+
+=== Round 5 (A) ===
+
+=== Round 6 (A) ===
+
+=== Round 7 (A) ===
+
+=== Round 8 (A) ===
+
+=== Round 9 (A) ===
+
+=== Round 10 (A) ===
+
+=== Round 11 (A) ===
+
+=== Round 12 (A) ===
+
+=== Round 13 (A) ===
+
+=== Round 14 (A) ===
+
+=== Round 15 (A) ===
+
+=== Round 16 (A) ===
+
+=== Round 17 (A) ===
+
+=== Round 18 (A) ===
+
+=== Round 19 (A) ===
+
+=== Round 20 (A) ===
+
+Starting interpolation direction B...
+
+=== Round 1 (B) ===
+
+=== Round 2 (B) ===
+
+=== Round 3 (B) ===
+
+=== Round 4 (B) ===
+
+=== Round 5 (B) ===
+Traceback (most recent call last):
+  File "/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/run_loop_combined.py", line 203, in <module>
+    main(args.rounds, l, args.s1_pdb, args.s2_pdb, args.pmpnn_run_path, args.output_dir)
+  File "/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/run_loop_combined.py", line 175, in main
+    new_pdb_path = run_ESM(input_seq=mixed_seq,
+  File "/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/run_loop_combined.py", line 39, in run_ESM
+    subprocess.run(
+  File "/home/hassan/anaconda3/lib/python3.9/subprocess.py", line 528, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command 'conda run -n esm3 python3 esm3_template.py PEPAEGAAELAERAAAIAAVPLFALATPEVLAALAAAAEVRRYAAGEVIVRAGEPVDALYLILSGRVRLVGPRERVLGPGDFFGLVGVVTGEPARVDAVALEDTKLLAIPAEAVRAALAANPALAARARALAARILAGEPLE ../test_CNBD/model_output/ESM_output_0.48/round5_B 0.48' returned non-zero exit status 1.

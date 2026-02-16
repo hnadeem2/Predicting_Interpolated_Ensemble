@@ -1,0 +1,15 @@
+
+
+{
+  "s1_pdb": "../test/1AJ7_chain_B_fixed.pdb",
+
+  "s2_pdb": "../test/2RCS_chain_B_fixed.pdb",
+  
+  "output_dir": "../test/output",
+  
+  "pmpnn_run_path": "../ProteinMPNN/protein_mpnn_run.py",
+  
+  "rounds": 3,
+  
+  "lambda_param_list": [0.1, 0.2]
+}

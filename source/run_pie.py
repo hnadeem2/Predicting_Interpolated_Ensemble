@@ -188,16 +188,21 @@ def main(rounds, lambda_param, s1_pdb, s2_pdb, pmpnn_run_path, output_dir):
 if __name__ == '__main__':
     import argparse
 
-    parser = argparse.ArgumentParser(description="Run bidirectional ProteinMPNN interpolation.")
-    parser.add_argument("--s1_pdb", type=str, required=True, help="Path to structure 1 PDB")
-    parser.add_argument("--s2_pdb", type=str, required=True, help="Path to structure 2 PDB")
-    parser.add_argument("--output_dir", type=str, required=True, help="Path to output directory")
-    parser.add_argument("--pmpnn_run_path", type=str, required=True, help="Path to protein_mpnn_run.py")
-    parser.add_argument("--rounds", type=int, required=True, help="Total number of interpolation rounds")
-    parser.add_argument("--lambda_param_list", type=float, nargs='+', required=True,
-                        help="List of lambda mixing parameters (space-separated, e.g. 0.1 0.3 0.5)")
+    parser = argparse.ArgumentParser(description="Run PIE.")
+    parser.add_argument("--config", type=str, required=True, help="Path to JSON config file")
 
     args = parser.parse_args()
     
-    for l in args.lambda_param_list:
-        main(args.rounds, l, args.s1_pdb, args.s2_pdb, args.pmpnn_run_path, args.output_dir)
+    # Load config file
+    with open(args.config, 'r') as f:
+        config = json.load(f)
+    
+    s1_pdb = config['s1_pdb']
+    s2_pdb = config['s2_pdb']
+    output_dir = config['output_dir']
+    pmpnn_run_path = config['pmpnn_run_path']
+    rounds = config['rounds']
+    lambda_param_list = config['lambda_param_list']
+    
+    for l in lambda_param_list:
+        main(rounds, l, s1_pdb, s2_pdb, pmpnn_run_path, output_dir)

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+python backmap.py --ref_pdb ../test_48G7/1AJ7_chain_B_fixed.pdb --pred_dir ../test_48G7/analysis/aggregated_pdbs/ --output_dir ../test_48G7/analysis/all_atom_predicted_pdbs
+python backmap.py --ref_pdb ../test_atsweet/IF.pdb --pred_dir ../test_atsweet/analysis/aggregated_pdbs/ --output_dir ../test_atsweet/analysis/all_atom_predicted_pdbs
+python backmap.py --ref_pdb ../test_CNBD/2K0G_chain_A_fixed.pdb --pred_dir ../test_CNBD/analysis/aggregated_pdbs/ --output_dir ../test_CNBD/analysis/all_atom_predicted_pdbs
+python backmap.py --ref_pdb ../test_S100B/1SYM_chain_B_fixed.pdb --pred_dir ../test_S100B/analysis/aggregated_pdbs/ --output_dir ../test_S100B/analysis/all_atom_predicted_pdbs
+

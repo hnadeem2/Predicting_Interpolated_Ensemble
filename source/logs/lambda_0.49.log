@@ -1,0 +1,100 @@
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: 2KXL_chain_A_fixed
+1 sequences of length 142 generated in 0.7729 seconds
+/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/../ProteinMPNN/protein_mpnn_run.py:178: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path, map_location=device)
+----------------------------------------
+chain_id_jsonl is NOT loaded
+----------------------------------------
+fixed_positions_jsonl is NOT loaded
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+----------------------------------------
+bias by residue dictionary is not loaded, or not provided
+----------------------------------------
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: 2K0G_chain_A_fixed
+1 sequences of length 142 generated in 0.7921 seconds
+Fetching 22 files:   0%|          | 0/22 [00:00<?, ?it/s]Fetching 22 files: 100%|██████████| 22/22 [00:00<00:00, 450120.43it/s]
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:00<00:06,  1.13it/s] 50%|█████     | 4/8 [00:00<00:00,  5.06it/s] 88%|████████▊ | 7/8 [00:01<00:00,  8.82it/s]100%|██████████| 8/8 [00:01<00:00,  6.90it/s]
+Traceback (most recent call last):
+  File "/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/esm3_template.py", line 31, in <module>
+    protein = model.generate(protein, GenerationConfig(track="structure", num_steps=8))
+  File "/home/hassan/.local/lib/python3.10/site-packages/esm/models/esm3.py", line 387, in generate
+    proteins = self.batch_generate([input], [config])
+  File "/home/hassan/.local/lib/python3.10/site-packages/esm/models/esm3.py", line 411, in batch_generate
+    return iterative_sampling_raw(self, inputs, configs)  # type: ignore
+  File "/home/hassan/.local/lib/python3.10/site-packages/esm/utils/generation.py", line 115, in iterative_sampling_raw
+    raw_proteins.append(client.decode(output_tokens))
+  File "/home/hassan/.local/lib/python3.10/site-packages/esm/models/esm3.py", line 507, in decode
+    function_token_decoder=self.get_function_decoder(),
+  File "/home/hassan/.local/lib/python3.10/site-packages/esm/models/esm3.py", line 265, in get_function_decoder
+    self._function_decoder = self.function_decoder_fn(self.device)
+  File "/home/hassan/.local/lib/python3.10/site-packages/esm/pretrained.py", line 57, in ESM3_function_decoder_v0
+    state_dict = torch.load(
+  File "/home/hassan/.local/lib/python3.10/site-packages/torch/serialization.py", line 1521, in load
+    return _load(
+  File "/home/hassan/.local/lib/python3.10/site-packages/torch/serialization.py", line 2119, in _load
+    result = unpickler.load()
+  File "/home/hassan/.local/lib/python3.10/site-packages/torch/_weights_only_unpickler.py", line 532, in load
+    self.append(self.persistent_load(pid))
+  File "/home/hassan/.local/lib/python3.10/site-packages/torch/serialization.py", line 2083, in persistent_load
+    typed_storage = load_tensor(
+  File "/home/hassan/.local/lib/python3.10/site-packages/torch/serialization.py", line 2049, in load_tensor
+    wrap_storage = restore_location(storage, location)
+  File "/home/hassan/.local/lib/python3.10/site-packages/torch/serialization.py", line 1864, in restore_location
+    return default_restore_location(storage, str(map_location))
+  File "/home/hassan/.local/lib/python3.10/site-packages/torch/serialization.py", line 698, in default_restore_location
+    result = fn(storage, location)
+  File "/home/hassan/.local/lib/python3.10/site-packages/torch/serialization.py", line 637, in _deserialize
+    return obj.to(device=device)
+  File "/home/hassan/.local/lib/python3.10/site-packages/torch/storage.py", line 291, in to
+    return _to(self, device, non_blocking)
+  File "/home/hassan/.local/lib/python3.10/site-packages/torch/_utils.py", line 101, in _to
+    untyped_storage = torch.UntypedStorage(self.size(), device=device)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 228.00 MiB. GPU 0 has a total capacity of 23.64 GiB of which 184.56 MiB is free. Including non-PyTorch memory, this process has 8.53 GiB memory in use. Process 9886 has 8.68 GiB memory in use. Process 9930 has 5.94 GiB memory in use. Of the allocated memory 7.45 GiB is allocated by PyTorch, and 645.16 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+ERROR conda.cli.main_run:execute(124): `conda run python3 esm3_template.py GLPEEPDEELEEKLKLIEGIPLFQLLSEEERERFLRDARLVTFKAGEVLLKKGEPVDRLYGILEGTVETDGPNGRTLGAGDTFGEGGLVTGEPAPYSLVAKEDVKVLVLSREAFKRALADSPELRELFEERAEEIRGKPPPE ../test_CNBD/model_output/ESM_output_0.49/round1_A 0.49` failed. (See above for error)
+Running esm3 for structure generation
+
+
+Starting interpolation direction A...
+
+=== Round 1 (A) ===
+Traceback (most recent call last):
+  File "/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/run_loop_combined.py", line 203, in <module>
+    main(args.rounds, l, args.s1_pdb, args.s2_pdb, args.pmpnn_run_path, args.output_dir)
+  File "/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/run_loop_combined.py", line 175, in main
+    new_pdb_path = run_ESM(input_seq=mixed_seq,
+  File "/home/hassan/research/projects/interpolated_ensemble_root_ESM/Predicting_Interpolated_Ensemble/source/run_loop_combined.py", line 39, in run_ESM
+    subprocess.run(
+  File "/home/hassan/anaconda3/lib/python3.9/subprocess.py", line 528, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command 'conda run -n esm3 python3 esm3_template.py GLPEEPDEELEEKLKLIEGIPLFQLLSEEERERFLRDARLVTFKAGEVLLKKGEPVDRLYGILEGTVETDGPNGRTLGAGDTFGEGGLVTGEPAPYSLVAKEDVKVLVLSREAFKRALADSPELRELFEERAEEIRGKPPPE ../test_CNBD/model_output/ESM_output_0.49/round1_A 0.49' returned non-zero exit status 1.

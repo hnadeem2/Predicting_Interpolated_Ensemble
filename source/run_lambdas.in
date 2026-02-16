@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# --- Configuration ---
+OUTPUT_DIR=../test_CNBD/model_output
+LOG_DIR=logs
+mkdir -p "$LOG_DIR"
+
+# --- Generate lambda values 0.00 → 0.50 in steps of 0.01 ---
+LAMBDAS=()
+for i in $(seq 0 0.01 0.50); do
+    LAMBDAS+=($(printf "%.2f" "$i"))
+done
+
+# --- Run jobs sequentially ---
+for LAMBDA in "${LAMBDAS[@]}"; do
+    echo "Launching λ = $LAMBDA ..."
+
+    python run_loop_combined.py \
+        --s1_pdb ../test_CNBD/2KXL_chain_A_fixed.pdb \
+        --s2_pdb ../test_CNBD/2K0G_chain_A_fixed.pdb \
+        --output_dir "$OUTPUT_DIR" \
+        --pmpnn_run_path ../ProteinMPNN/protein_mpnn_run.py \
+        --rounds 20 \
+        --lambda_param_list "$LAMBDA" \
+        > "$LOG_DIR/lambda_${LAMBDA}.log" 2>&1
+
+    echo "✅ λ = $LAMBDA completed."
+
+    # Wait a few seconds before the next run
+    sleep 5
+done
+
+echo "🎉 All lambda runs (0.00–0.50) completed sequentially."
